@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ mod.title }} - BlockMods{% endblock %}
+
+{% block content %}
+<div class="mod-detail">
+    <div class="mod-header-detail">
+        <div class="mod-image-large" style="background: linear-gradient(to right, #0d5e2c, #1a9047);"></div>
+        <div class="mod-info">
+            <h1 class="mod-title-large">{{ mod.title }}</h1>
+            <div class="mod-meta">
+                <span class="mod-author">
+                    <i class="fas fa-user"></i> {{ mod.author.username }}
+                </span>
+                <span class="mod-category">
+                    <i class="fas fa-tag"></i> {{ mod.category.name }}
+                </span>
+                <span class="mod-version">
+                    <i class="fas fa-code-branch"></i> {{ mod.current_version }}
+                </span>
+            </div>
+            <div class="mod-stats-large">
+                <div class="stat">
+                    <i class="fas fa-download"></i>
+                    <span>{{ mod.downloads }} скачиваний</span>
+                </div>
+                <div class="stat">
+                    <i class="fas fa-star"></i>
+                    <span>{{ mod.average_rating|default:"4.5" }} рейтинг</span>
+                </div>
+            </div>
+            <div class="mod-actions-large">
+                <button class="action-btn primary-btn large">
+                    <i class="fas fa-download"></i> Скачать
+                </button>
+                <button class="action-btn secondary-btn large">
+                    <i class="far fa-bookmark"></i> В закладки
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="mod-content-detail">
+        <div class="description-section">
+            <h2>Описание</h2>
+            <p>{{ mod.description }}</p>
+        </div>
+
+        <div class="versions-section">
+            <h2>Версии</h2>
+            <div class="versions-list">
+                {% for version in mod.versions.all %}
+                <div class="version-item">
+                    <div class="version-number">{{ version.version_number }}</div>
+                    <div class="version-date">{{ version.release_date }}</div>
+                    <div class="version-changelog">{{ version.changelog }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="reviews-section">
+            <h2>Отзывы</h2>
+            <div class="reviews-list">
+                {% for review in mod.review_set.all %}
+                <div class="review-item">
+                    <div class="review-header">
+                        <span class="review-author">{{ review.author_name }}</span>
+                        <div class="review-rating">
+                            {% for i in "12345" %}
+                                <i class="fas fa-star {% if forloop.counter <= review.rating %}star-icon{% endif %}"></i>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <p class="review-text">{{ review.text }}</p>
+                    <span class="review-date">{{ review.created_at|date:"d.m.Y" }}</span>
+                </div>
+                {% empty %}
+                <p>Пока нет отзывов</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
