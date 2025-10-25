@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Анимация карточек
     document.querySelectorAll('.mod-card').forEach(card => {
         card.addEventListener('mouseover', () => {
             card.style.transform = 'translateY(-7px)';
@@ -9,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Анимация кнопок
     document.querySelectorAll('.action-btn').forEach(btn => {
         btn.addEventListener('mouseover', () => {
             if(btn.classList.contains('primary-btn')) {
@@ -27,20 +29,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    const filterSelects = document.querySelectorAll('.filter-select');
-    filterSelects.forEach(select => {
+    // Авто-сабмит фильтров
+    document.querySelectorAll('.filter-select').forEach(select => {
         select.addEventListener('change', function() {
             this.closest('form').submit();
         });
     });
-
-    const searchForm = document.querySelector('.search-form');
-    if (searchForm) {
-        searchForm.addEventListener('submit', function(e) {
-            const searchInput = this.querySelector('.search-input');
-            if (!searchInput.value.trim()) {
-                searchInput.value = '';
-            }
-        });
-    }
 });

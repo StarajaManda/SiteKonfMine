@@ -9,7 +9,7 @@
         <div class="section-header">
             <h2 class="section-title">
                 <i class="fas fa-crown" style="color: #f59e0b;"></i>
-                Все моды
+                {% if request.GET.category %}Моды: {{ category_name }}{% else %}Все моды{% endif %}
             </h2>
             <span class="mods-count">Найдено: {{ mods|length }}</span>
         </div>
@@ -44,7 +44,7 @@
                         <small>Версия: {{ mod.current_version }}</small>
                     </div>
                     <div class="mod-actions">
-                        <a href="{% url 'mods:mod_detail' mod.id %}" class="action-btn primary-btn">
+                        <a href="{% url 'mscar_app:mod_detail' mod.id %}" class="action-btn primary-btn">
                             <i class="fas fa-info-circle"></i> Подробнее
                         </a>
                         <button class="action-btn secondary-btn">
