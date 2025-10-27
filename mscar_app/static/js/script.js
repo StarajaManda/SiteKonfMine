@@ -1,5 +1,48 @@
+function openDownloadModal(modId) {
+    const modal = document.getElementById('downloadModal');
+    const modalContainer = modal.querySelector('.modal-container');
+    
+    // Загружаем содержимое модального окна
+    fetch(`/mod/${modId}/download-modal/`)
+        .then(response => response.text())
+        .then(html => {
+            modalContainer.innerHTML = html;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Блокируем скролл
+        })
+        .catch(error => {
+            console.error('Error loading download modal:', error);
+        });
+}
+
+function closeDownloadModal() {
+    const modal = document.getElementById('downloadModal');
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto'; // Разблокируем скролл
+}
+
+// Закрытие модального окна при клике вне его
 document.addEventListener('DOMContentLoaded', function() {
-    // Анимация карточек
+    const modal = document.getElementById('downloadModal');
+    if (modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeDownloadModal();
+            }
+        });
+    }
+    
+    // Обработка успешных скачиваний
+    document.querySelectorAll('.download-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            // Можно добавить аналитику или дополнительную логику
+            console.log('Download initiated:', this.href);
+        });
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Анимация карточ
     document.querySelectorAll('.mod-card').forEach(card => {
         card.addEventListener('mouseover', () => {
             card.style.transform = 'translateY(-7px)';

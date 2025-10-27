@@ -35,12 +35,12 @@
                 </div>
             </div>
             <div class="mod-actions-large">
-                <button class="action-btn primary-btn large">
+                <button class="action-btn primary-btn large" onclick="openDownloadModal({{ mod.id }})">
                     <i class="fas fa-download"></i> Скачать
-                </button>
-                <button class="action-btn secondary-btn large">
-                    <i class="far fa-bookmark"></i> В закладки
-                </button>
+            </button>
+            <button class="action-btn secondary-btn large">
+                <i class="far fa-bookmark"></i> В закладки
+            </button>
             </div>
         </div>
     </div>
@@ -101,5 +101,10 @@
             </div>
         </div>
     </div>
+    <div id="downloadModal" class="modal-overlay" style="display: none;">
+    <div class="modal-container">
+        <!-- Сюда будет загружаться содержимое модального окна -->
+    </div>
+</div>
 </div>
 {% endblock %}
