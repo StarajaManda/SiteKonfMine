@@ -26,8 +26,12 @@
                     <span>{{ mod.downloads }} скачиваний</span>
                 </div>
                 <div class="stat">
-                    <i class="fas fa-star"></i>
-                    <span>{{ mod.average_rating|default:"4.5" }} рейтинг</span>
+                    <div class="rating-large">
+                        {% for i in "12345" %}
+                            <i class="fas fa-star {% if forloop.counter <= mod.average_rating %}star-icon{% endif %}"></i>
+                        {% endfor %}
+                        <span>{{ mod.average_rating }} ({{ mod.total_reviews }} отзывов)</span>
+                    </div>
                 </div>
             </div>
             <div class="mod-actions-large">
@@ -47,23 +51,35 @@
             <p>{{ mod.description }}</p>
         </div>
 
-        <div class="versions-section">
-            <h2>Версии</h2>
-            <div class="versions-list">
-                {% for version in mod.versions.all %}
-                <div class="version-item">
-                    <div class="version-number">{{ version.version_number }}</div>
-                    <div class="version-date">{{ version.release_date }}</div>
-                    <div class="version-changelog">{{ version.changelog }}</div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-
         <div class="reviews-section">
-            <h2>Отзывы</h2>
+            <h2>Отзывы ({{ mod.total_reviews }})</h2>
+            
+            <!-- Форма добавления отзыва -->
+            <div class="add-review-form">
+                <h3>Оставить отзыв</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="{{ form.author_name.id_for_label }}">Ваше имя:</label>
+                        {{ form.author_name }}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.rating.id_for_label }}">Оценка:</label>
+                        {{ form.rating }}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.text.id_for_label }}">Отзыв:</label>
+                        {{ form.text }}
+                    </div>
+                    <button type="submit" class="action-btn primary-btn">
+                        <i class="fas fa-paper-plane"></i> Отправить отзыв
+                    </button>
+                </form>
+            </div>
+
+            <!-- Список отзывов -->
             <div class="reviews-list">
-                {% for review in mod.review_set.all %}
+                {% for review in reviews %}
                 <div class="review-item">
                     <div class="review-header">
                         <span class="review-author">{{ review.author_name }}</span>
@@ -71,13 +87,16 @@
                             {% for i in "12345" %}
                                 <i class="fas fa-star {% if forloop.counter <= review.rating %}star-icon{% endif %}"></i>
                             {% endfor %}
+                            <span class="review-date">{{ review.created_at|date:"d.m.Y H:i" }}</span>
                         </div>
                     </div>
                     <p class="review-text">{{ review.text }}</p>
-                    <span class="review-date">{{ review.created_at|date:"d.m.Y" }}</span>
                 </div>
                 {% empty %}
-                <p>Пока нет отзывов</p>
+                <div class="no-reviews">
+                    <i class="fas fa-comment-slash fa-2x"></i>
+                    <p>Пока нет отзывов. Будьте первым!</p>
+                </div>
                 {% endfor %}
             </div>
         </div>

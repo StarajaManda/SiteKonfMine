@@ -16,6 +16,110 @@
     --transition: all 0.3s ease;
 }
 
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-input, .form-select, .form-textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: var(--border-radius);
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+    outline: none;
+    border-color: var(--secondary-green);
+    box-shadow: 0 0 0 3px rgba(97, 181, 83, 0.2);
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Стили для отзывов */
+.add-review-form {
+    background: var(--white);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.rating-large {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.review-item {
+    background: var(--white);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--spacing-sm);
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.review-author {
+    font-weight: 600;
+    color: var(--dark-gray);
+}
+
+.review-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.review-date {
+    color: #6b7280;
+    font-size: 0.8rem;
+}
+
+.review-text {
+    line-height: 1.5;
+    color: var(--dark-gray);
+}
+
+.no-reviews {
+    text-align: center;
+    padding: var(--spacing-lg);
+    color: var(--dark-gray);
+}
+
+.no-reviews i {
+    margin-bottom: var(--spacing-sm);
+    color: #d1d5db;
+}
+
+/* Сообщения */
+.messages {
+    margin-bottom: var(--spacing-md);
+}
+
+.alert {
+    padding: 0.75rem 1rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 0.5rem;
+}
+
+.alert-success {
+    background-color: #d1fae5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
 * {
     margin: 0;
     padding: 0;

@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -35,6 +36,22 @@ class Mod(models.Model):
     
     def __str__(self):
         return self.title
+    
+    def increment_downloads(self):
+        """Увеличивает счетчик скачиваний"""
+        self.downloads += 1
+        self.save()
+    
+    @property
+    def average_rating(self):
+        reviews = self.review_set.all()
+        if reviews:
+            return round(sum(review.rating for review in reviews) / len(reviews), 1)
+        return 0
+    
+    @property
+    def total_reviews(self):
+        return self.review_set.count()
 
 class Version(models.Model):
     mod = models.ForeignKey(Mod, on_delete=models.CASCADE, related_name='versions')
@@ -52,16 +69,20 @@ class Version(models.Model):
 class Review(models.Model):
     mod = models.ForeignKey(Mod, on_delete=models.CASCADE)
     author_name = models.CharField(max_length=100)
-    rating = models.PositiveSmallIntegerField()
-    text = models.TextField()
+    rating = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        help_text="Оценка от 1 до 5 звезд"
+    )
+    text = models.TextField(verbose_name="Текст отзыва")
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
+        ordering = ['-created_at']
     
     def __str__(self):
-        return f"{self.mod.title} - {self.author_name}"
+        return f"{self.mod.title} - {self.author_name} ({self.rating}/5)"
 
 class Tag(models.Model):
     name = models.CharField(max_length=50)

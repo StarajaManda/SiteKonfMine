@@ -1,0 +1,38 @@
+<div class="download-modal">
+    <div class="modal-header">
+        <h3>Скачать {{ mod.title }}</h3>
+        <button class="close-modal" onclick="closeDownloadModal()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    
+    <div class="modal-content">
+        <div class="current-version">
+            <h4>Текущая версия: {{ mod.current_version }}</h4>
+            <a href="{% url 'mscar_app:download_mod' mod.id %}" class="action-btn primary-btn large download-btn">
+                <i class="fas fa-download"></i> Скачать последнюю версию
+            </a>
+        </div>
+        
+        {% if versions %}
+        <div class="versions-list">
+            <h4>Другие версии:</h4>
+            {% for version in versions %}
+            <div class="version-item">
+                <div class="version-info">
+                    <strong>Версия {{ version.version_number }}</strong>
+                    <span class="version-date">{{ version.release_date }}</span>
+                </div>
+                <a href="{% url 'mscar_app:download_mod' mod.id version.id %}" class="action-btn secondary-btn download-btn">
+                    <i class="fas fa-download"></i> Скачать
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <div class="download-info">
+            <p><i class="fas fa-info-circle"></i> После скачивания переместите файл в папку mods вашего клиента Minecraft</p>
+        </div>
+    </div>
+</div>
