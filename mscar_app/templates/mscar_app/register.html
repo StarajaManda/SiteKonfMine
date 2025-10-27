@@ -1,0 +1,32 @@
+{% extends "mscar_app/base.html" %}
+{% load static %}
+
+{% block title %}Регистрация - BlockMods{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>Регистрация</h2>
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <div class="error-list">
+                    {% for error in field.errors %}
+                    <span class="error">{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="action-btn primary-btn large">Зарегистрироваться</button>
+        </form>
+        <p class="auth-link">
+            Уже есть аккаунт? <a href="{% url 'mscar_app:login' %}">Войти</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

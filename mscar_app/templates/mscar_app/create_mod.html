@@ -1,0 +1,126 @@
+{% extends "mscar_app/base.html" %}
+{% load static %}
+
+{% block title %}Создать мод - BlockMods{% endblock %}
+
+{% block content %}
+<div class="create-mod-container">
+    <h1>Создать новый мод</h1>
+    
+    <form id="createModForm" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="form-section">
+            <h2>Основная информация</h2>
+            {% for field in mod_form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                <small class="help-text">{{ field.help_text }}</small>
+                {% endif %}
+                {% if field.errors %}
+                <div class="error-list">
+                    {% for error in field.errors %}
+                    <span class="error">{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="form-section">
+            <h2>Первая версия</h2>
+            {% for field in version_form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                <small class="help-text">{{ field.help_text }}</small>
+                {% endif %}
+                {% if field.errors %}
+                <div class="error-list">
+                    {% for error in field.errors %}
+                    <span class="error">{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <button type="submit" class="action-btn primary-btn large">
+            <i class="fas fa-upload"></i> Опубликовать мод
+        </button>
+    </form>
+</div>
+
+<!-- Модальное окно поздравления -->
+<div id="congratModal" class="modal-overlay" style="display: none;">
+    <div class="modal-container">
+        <div class="congrat-modal">
+            <div class="congrat-header">
+                <i class="fas fa-trophy fa-3x" style="color: #f59e0b;"></i>
+                <h2>Поздравляем!</h2>
+            </div>
+            <div class="congrat-content">
+                <p>Вы стали автором на BlockMods!</p>
+                <p>Теперь вы можете загружать моды и управлять своими проектами.</p>
+            </div>
+            <div class="congrat-actions">
+                <button onclick="closeCongratModal()" class="action-btn primary-btn large">
+                    Отлично!
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('createModForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    fetch('{% url "mscar_app:create_mod" %}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (data.became_author) {
+                // Показываем поздравление
+                showCongratModal();
+            } else {
+                // Просто перенаправляем на страницу мода
+                window.location.href = `/mod/${data.mod_id}/`;
+            }
+        } else {
+            // Показываем ошибки
+            alert('Ошибка при создании мода: ' + JSON.stringify(data.errors));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Произошла ошибка при отправке формы');
+    });
+});
+
+function showCongratModal() {
+    document.getElementById('congratModal').style.display = 'flex';
+}
+
+function closeCongratModal() {
+    document.getElementById('congratModal').style.display = 'none';
+    // Перенаправляем на страницу профиля или мода
+    window.location.href = '{% url "mscar_app:profile" %}';
+}
+</script>
+{% endblock %}

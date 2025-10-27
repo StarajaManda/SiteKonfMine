@@ -1,4 +1,5 @@
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from . import views
 
 app_name = 'mscar_app'
@@ -9,4 +10,14 @@ urlpatterns = [
     path('mod/<int:mod_id>/download/', views.download_mod, name='download_mod'),
     path('mod/<int:mod_id>/download/<int:version_id>/', views.download_mod, name='download_mod_version'),
     path('mod/<int:mod_id>/download-modal/', views.download_modal, name='download_modal'),
+    
+    # Аутентификация
+    path('register/', views.register, name='register'),
+    path('login/', views.user_login, name='login'),
+    path('logout/', views.user_logout, name='logout'),
+    
+    # Профиль и моды
+    path('profile/', views.profile, name='profile'),
+    path('mod/create/', views.create_mod, name='create_mod'),
+    path('mod/<int:mod_id>/add-version/', views.add_version, name='add_version'),
 ]

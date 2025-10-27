@@ -1,9 +1,149 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 import os
-from .models import Mod, Category, Review, Version
-from .forms import ReviewForm
+from .models import Mod, Category, Review, Version, UserProfile
+from .forms import ReviewForm, CustomUserCreationForm, UserProfileForm, ModForm, VersionForm
+
+def register(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, 'Регистрация прошла успешно!')
+            return redirect('mscar_app:mod_list')
+    else:
+        form = CustomUserCreationForm()
+    
+    return render(request, 'mscar_app/register.html', {'form': form})
+
+def user_login(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            messages.success(request, f'Добро пожаловать, {username}!')
+            return redirect('mscar_app:mod_list')
+        else:
+            messages.error(request, 'Неверное имя пользователя или пароль')
+    
+    return render(request, 'mscar_app/login.html')
+
+@login_required
+def user_logout(request):
+    logout(request)
+    messages.success(request, 'Вы успешно вышли из системы')
+    return redirect('mscar_app:mod_list')
+
+@login_required
+def profile(request):
+    user_profile = request.user.userprofile
+    user_mods = Mod.objects.filter(author=request.user)
+    
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Профиль успешно обновлен!')
+            return redirect('mscar_app:profile')
+    else:
+        form = UserProfileForm(instance=user_profile)
+    
+    context = {
+        'form': form,
+        'user_mods': user_mods,
+        'user_profile': user_profile,
+    }
+    return render(request, 'mscar_app/profile.html', context)
+
+@login_required
+def create_mod(request):
+    if request.method == 'POST':
+        mod_form = ModForm(request.POST, request.FILES)
+        version_form = VersionForm(request.POST, request.FILES)
+        
+        if mod_form.is_valid() and version_form.is_valid():
+            # Сохраняем мод
+            mod = mod_form.save(commit=False)
+            mod.author = request.user
+            mod.current_version = version_form.cleaned_data['version_number']
+            mod.save()
+            
+            # Сохраняем версию
+            version = version_form.save(commit=False)
+            version.mod = mod
+            version.save()
+            
+            # Проверяем, стал ли пользователь автором
+            user_profile = request.user.userprofile
+            became_author = user_profile.promote_to_author()
+            
+            messages.success(request, 'Мод успешно загружен!')
+            
+            if became_author:
+                # Возвращаем флаг для показа поздравления
+                return JsonResponse({
+                    'success': True,
+                    'became_author': True,
+                    'mod_id': mod.id
+                })
+            else:
+                return JsonResponse({
+                    'success': True,
+                    'became_author': False,
+                    'mod_id': mod.id
+                })
+        else:
+            errors = {}
+            if mod_form.errors:
+                errors.update(mod_form.errors)
+            if version_form.errors:
+                errors.update(version_form.errors)
+            return JsonResponse({'success': False, 'errors': errors})
+    
+    else:
+        mod_form = ModForm()
+        version_form = VersionForm()
+    
+    categories = Category.objects.all()
+    context = {
+        'mod_form': mod_form,
+        'version_form': version_form,
+        'categories': categories,
+    }
+    return render(request, 'mscar_app/create_mod.html', context)
+
+@login_required
+def add_version(request, mod_id):
+    mod = get_object_or_404(Mod, id=mod_id, author=request.user)
+    
+    if request.method == 'POST':
+        form = VersionForm(request.POST, request.FILES)
+        if form.is_valid():
+            version = form.save(commit=False)
+            version.mod = mod
+            version.save()
+            
+            # Обновляем текущую версию мода
+            mod.current_version = version.version_number
+            mod.save()
+            
+            messages.success(request, 'Версия успешно добавлена!')
+            return redirect('mscar_app:mod_detail', mod_id=mod.id)
+    else:
+        form = VersionForm()
+    
+    context = {
+        'form': form,
+        'mod': mod,
+    }
+    return render(request, 'mscar_app/add_version.html', context)
 
 def mod_list(request):
     categories = Category.objects.all()

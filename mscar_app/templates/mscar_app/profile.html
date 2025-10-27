@@ -1,0 +1,98 @@
+{% extends "mscar_app/base.html" %}
+{% load static %}
+
+{% block title %}Профиль - BlockMods{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <div class="profile-avatar">
+            {% if user_profile.avatar %}
+            <img src="{{ user_profile.avatar.url }}" alt="Аватар">
+            {% else %}
+            <div class="avatar-placeholder">
+                <i class="fas fa-user fa-2x"></i>
+            </div>
+            {% endif %}
+        </div>
+        <div class="profile-info">
+            <h1>{{ user.username }}</h1>
+            <span class="user-role {{ user_profile.role }}">
+                {{ user_profile.get_role_display }}
+            </span>
+            {% if user_profile.bio %}
+            <p class="user-bio">{{ user_profile.bio }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="profile-content">
+        <div class="profile-form">
+            <h2>Редактировать профиль</h2>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                    <small class="help-text">{{ field.help_text }}</small>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                <button type="submit" class="action-btn primary-btn">Сохранить</button>
+            </form>
+        </div>
+
+        <div class="user-mods">
+            <h2>Мои моды ({{ user_mods|length }})</h2>
+            {% if user_mods %}
+            <div class="mods-grid">
+                {% for mod in user_mods %}
+                <div class="mod-card">
+                    <div class="mod-header">
+                        {% if mod.image %}
+                        <img src="{{ mod.image.url }}" alt="{{ mod.title }}" class="mod-image">
+                        {% else %}
+                        <div class="mod-image" style="background: linear-gradient(to right, #0d5e2c, #1a9047);"></div>
+                        {% endif %}
+                        <span class="mod-badge">{{ mod.category.name }}</span>
+                    </div>
+                    <div class="mod-content">
+                        <h3 class="mod-title">{{ mod.title }}</h3>
+                        <div class="mod-stats">
+                            <div class="rating">
+                                <i class="fas fa-star star-icon"></i>
+                                <span>{{ mod.average_rating }}</span>
+                            </div>
+                            <div class="downloads">
+                                <i class="fas fa-download"></i>
+                                <span>{{ mod.downloads }}</span>
+                            </div>
+                        </div>
+                        <div class="mod-actions">
+                            <a href="{% url 'mscar_app:mod_detail' mod.id %}" class="action-btn primary-btn">
+                                <i class="fas fa-eye"></i> Просмотр
+                            </a>
+                            <a href="{% url 'mscar_app:add_version' mod.id %}" class="action-btn secondary-btn">
+                                <i class="fas fa-plus"></i> Версия
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="no-mods">
+                <i class="fas fa-box-open fa-3x"></i>
+                <h3>У вас пока нет модов</h3>
+                <p>Создайте свой первый мод!</p>
+                <a href="{% url 'mscar_app:create_mod' %}" class="action-btn primary-btn">
+                    <i class="fas fa-plus"></i> Создать мод
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
