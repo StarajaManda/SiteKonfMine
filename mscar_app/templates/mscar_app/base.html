@@ -22,15 +22,27 @@
                 <h1 class="logo-text">BlockMods</h1>
             </div>
             <div class="user-controls">
-                <button class="icon-btn">
+                <button class="icon-btn" data-url="{% url 'mscar_app:mod_list' %}" title="Поиск модов">
                     <i class="fas fa-search"></i>
                 </button>
-                <button class="icon-btn">
-                    <i class="fas fa-bookmark"></i>
-                </button>
-                <button class="icon-btn">
-                    <i class="fas fa-user-circle"></i>
-                </button>
+                {% if user.is_authenticated %}
+                    <button class="icon-btn" data-url="{% url 'mscar_app:profile' %}" title="Профиль">
+                        <i class="fas fa-user-circle"></i>
+                    </button>
+                    <form method="post" action="{% url 'mscar_app:logout' %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="icon-btn" title="Выйти">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </form>
+                {% else %}
+                    <button class="icon-btn" data-url="{% url 'mscar_app:login' %}" title="Войти">
+                         <i class="fas fa-sign-in-alt"></i>
+                    </button>
+                    <button class="icon-btn" data-url="{% url 'mscar_app:register' %}" title="Регистрация">
+                        <i class="fas fa-user-plus"></i>
+                    </button>
+                {% endif %}
             </div>
         </div>
 
