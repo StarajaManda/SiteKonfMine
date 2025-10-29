@@ -18,6 +18,8 @@ urlpatterns = [
     
     # Профиль и моды
     path('profile/', views.profile, name='profile'),
+    path('bookmarks/', views.bookmarks, name='bookmarks'),  # ✅ Теперь функция существует
+    path('mod/<int:mod_id>/bookmark/', views.toggle_bookmark, name='toggle_bookmark'),  # ✅ И эта тоже
     path('mod/create/', views.create_mod, name='create_mod'),
     path('mod/<int:mod_id>/add-version/', views.add_version, name='add_version'),
 ]

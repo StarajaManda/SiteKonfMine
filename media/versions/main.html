@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="filename" content="minecraft_mods_catalog.html">
+    <title>Каталог модов Minecraft</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@700;800&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        :root {
+            --primary-green: #1a9047;
+            --secondary-green: #61b553;
+            --dark-green: #0d5e2c;
+            --amber: #f59e0b;
+            --light-gray: #f3f4f6;
+            --dark-gray: #374151;
+            --white: #ffffff;
+            --border-radius: 12px;
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            line-height: 1.6;
+            padding: var(--spacing-sm);
+        }
+
+        .page-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--secondary-green) 0%, var(--primary-green) 100%);
+            padding: var(--spacing-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .logo-icon {
+            background-color: var(--white);
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text {
+            color: var(--white);
+            font-family: 'Rubik', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+        }
+
+        .user-controls {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .icon-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: var(--white);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Search section */
+        .search-section {
+            padding: var(--spacing-md);
+            background-color: var(--white);
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .search-box {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.75rem 1.25rem;
+            border: 1px solid #d1d5db;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--secondary-green);
+            box-shadow: 0 0 0 3px rgba(97, 181, 83, 0.2);
+        }
+
+        .filter-select {
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: var(--border-radius);
+            background-color: var(--white);
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        /* Main content */
+        .main-content {
+            display: flex;
+            padding: var(--spacing-md);
+            gap: var(--spacing-lg);
+        }
+
+        .sidebar {
+            flex: 0 0 250px;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .category-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            padding: var(--spacing-md);
+        }
+
+        .category-title {
+            font-family: 'Rubik', sans-serif;
+            font-weight: 700;
+            color: var(--dark-green);
+            margin-bottom: var(--spacing-sm);
+            font-size: 1.25rem;
+        }
+
+        .category-list {
+            list-style: none;
+        }
+
+        .category-item {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f3f4f6;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .category-item:hover {
+            color: var(--primary-green);
+        }
+
+        .category-icon {
+            color: var(--secondary-green);
+            width: 24px;
+            height: 24px;
+        }
+
+        .community-card {
+            background: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
+            color: white;
+            border-radius: var(--border-radius);
+            padding: var(--spacing-md);
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .community-title {
+            font-family: 'Rubik', sans-serif;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .community-btn {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            margin-top: var(--spacing-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+        }
+
+        .community-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Mods grid */
+        .mods-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--spacing-md);
+        }
+
+        .mod-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            transition: var(--transition);
+            border: 1px solid #e5e7eb;
+        }
+
+        .mod-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .mod-header {
+            position: relative;
+        }
+
+        .mod-image {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            background: linear-gradient(120deg, var(--dark-green) 0%, var(--secondary-green) 100%);
+        }
+
+        .mod-badge {
+            position: absolute;
+            top: var(--spacing-sm);
+            right: var(--spacing-sm);
+            background: var(--amber);
+            color: var(--white);
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .mod-content {
+            padding: var(--spacing-md);
+        }
+
+        .mod-title {
+            font-family: 'Rubik', sans-serif;
+            font-size: 1.25rem;
+            margin-bottom: var(--spacing-xs);
+            color: var(--dark-gray);
+        }
+
+        .mod-author {
+            color: var(--secondary-green);
+            font-weight: 500;
+            margin-bottom: var(--spacing-sm);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .mod-description {
+            color: var(--dark-gray);
+            font-size: 0.9rem;
+            margin-bottom: var(--spacing-sm);
+            line-height: 1.5;
+        }
+
+        .mod-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: var(--spacing-sm);
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .star-icon {
+            color: var(--amber);
+        }
+
+        .downloads {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-weight: 500;
+            color: var(--dark-gray);
+        }
+
+        .mod-actions {
+            margin-top: var(--spacing-sm);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 0.5rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .primary-btn {
+            background-color: var(--primary-green);
+            color: var(--white);
+        }
+
+        .primary-btn:hover {
+            background-color: var(--dark-green);
+        }
+
+        .secondary-btn {
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+        }
+
+        .secondary-btn:hover {
+            background-color: #e5e7eb;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
+            .sidebar {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .search-box {
+                flex-direction: column;
+            }
+
+            .filter-select {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .mods-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Featured mods section */
+        .featured-section {
+            grid-column: 1 / -1;
+            padding: var(--spacing-md);
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            margin-top: var(--spacing-md);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .section-title {
+            font-family: 'Rubik', sans-serif;
+            font-size: 1.5rem;
+            color: var(--dark-gray);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .view-all {
+            color: var(--primary-green);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .view-all:hover {
+            text-decoration: underline;
+        }
+
+        .featured-mods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-md);
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19.5 9L12 3L4.5 9M19.5 9L12 15M19.5 9V21H4.5V9" stroke="#1a9047" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 3V15" stroke="#1a9047" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h1 class="logo-text">BlockMods</h1>
+            </div>
+            <div class="user-controls">
+                <button class="icon-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+                <button class="icon-btn">
+                    <i class="fas fa-bookmark"></i>
+                </button>
+                <button class="icon-btn">
+                    <i class="fas fa-user-circle"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Поиск модов...">
+                <button class="action-btn primary-btn">
+                    <i class="fas fa-search"></i> Искать
+                </button>
+                <select class="filter-select">
+                    <option>Популярные</option>
+                    <option>Новые</option>
+                    <option>Лучшее за всё время</option>
+                    <option selected>По рейтингу</option>
+                </select>
+                <select class="filter-select">
+                    <option>Все категории</option>
+                    <option selected>Технологии</option>
+                    <option>Магия</option>
+                    <option>Приключения</option>
+                    <option>Декорации</option>
+                    <option>Биомы</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="category-card">
+                    <h2 class="category-title">Категории</h2>
+                    <ul class="category-list">
+                        <li class="category-item">
+                            <div class="category-icon">
+                                <i class="fas fa-cog"></i>
+                            </div>
+                            Технологии
+                        </li>
+                        <li class="category-item">
+                            <div class="category-icon">
+                                <i class="fas fa-hat-wizard"></i>
+                            </div>
+                            Магия
+                        </li>
+                        <li class="category-item">
+                            <div class="category-icon">
+                                <i class="fas fa-map"></i>
+                            </div>
+                            Исследования
+                        </li>
+                        <li class="category-item">
+                            <div class="category-icon">
+                                <i class="fas fa-tree"></i>
+                            </div>
+                            Биомы
+                        </li>
+                        <li class="category-item">
+                            <div class="category-icon">
+                                <i class="fas fa-puzzle-piece"></i>
+                            </div>
+                            Инструменты
+                        </li>
+                        <li class="category-item">
+                            <div class="category-icon">
+                                <i class="fas fa-moon"></i>
+                            </div>
+                            Монстры
+                        </li>
+                        <li class="category-item">
+                            <div class="category-icon">
+                                <i class="fas fa-magic"></i>
+                            </div>
+                            Оптимизация
+                        </li>
+                        <li class="category-item">
+                            <div class="category-icon">
+                                <i class="fas fa-cubes"></i>
+                            </div>
+                            Генерация мира
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="community-card">
+                    <h3 class="community-title">Присоединяйтесь к сообществу</h3>
+                    <p>Общайтесь с создателями модов и другими игроками!</p>
+                    <button class="community-btn">Наш Discord</button>
+                </div>
+            </div>
+
+            <div class="mods-grid">
+                <div class="featured-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-crown" style="color: #f59e0b;"></i>
+                            Популярные моды
+                        </h2>
+                        <a href="#" class="view-all">Показать все →</a>
+                    </div>
+                    <div class="featured-mods">
+                        <!-- Featured mods go here -->
+                    </div>
+                </div>
+                
+                <!-- Mod Card 1 - Industrial Craft -->
+                <div class="mod-card">
+                    <div class="mod-header">
+                        <div class="mod-image" style="background: linear-gradient(to right, #0d5e2c, #1a9047);"></div>
+                        <span class="mod-badge">Топ 1</span>
+                    </div>
+                    <div class="mod-content">
+                        <h3 class="mod-title">Industrial Craft 2</h3>
+                        <div class="mod-author">
+                            <i class="fas fa-user"></i>
+                            Alblaka
+                        </div>
+                        <p class="mod-description">
+                            Мод добавляет мощные машины, электричество и новые ресурсы. Полностью меняет крафтовую систему!
+                        </p>
+                        <div class="mod-stats">
+                            <div class="rating">
+                                <i class="fas fa-star star-icon"></i>
+                                <span>4.8</span>
+                            </div>
+                            <div class="downloads">
+                                <i class="fas fa-download"></i>
+                                <span>1.4M+</span>
+                            </div>
+                        </div>
+                        <div class="mod-actions">
+                            <button class="action-btn primary-btn">
+                                <i class="fas fa-download"></i> Скачать
+                            </button>
+                            <button class="action-btn secondary-btn">
+                                <i class="far fa-bookmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mod Card 2 - Thaumcraft -->
+                <div class="mod-card">
+                    <div class="mod-header">
+                        <div class="mod-image" style="background: linear-gradient(to right, #5235ab, #6240c3);"></div>
+                        <span class="mod-badge">Магия</span>
+                    </div>
+                    <div class="mod-content">
+                        <h3 class="mod-title">Thaumcraft 6</h3>
+                        <div class="mod-author">
+                            <i class="fas fa-user"></i>
+                            Azanor
+                        </div>
+                        <p class="mod-description">
+                            Погрузитесь в мир древних знаний и арканой энергии. Откройте тайны магии через исследование!
+                        </p>
+                        <div class="mod-stats">
+                            <div class="rating">
+                                <i class="fas fa-star star-icon"></i>
+                                <span>4.9</span>
+                            </div>
+                            <div class="downloads">
+                                <i class="fas fa-download"></i>
+                                <span>1.2M+</span>
+                            </div>
+                        </div>
+                        <div class="mod-actions">
+                            <button class="action-btn primary-btn">
+                                <i class="fas fa-download"></i> Скачать
+                            </button>
+                            <button class="action-btn secondary-btn">
+                                <i class="far fa-bookmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mod Card 3 - JourneyMap -->
+                <div class="mod-card">
+                    <div class="mod-header">
+                        <div class="mod-image" style="background: linear-gradient(to right, #3498db, #1abc9c);"></div>
+                        <span class="mod-badge">Утилита</span>
+                    </div>
+                    <div class="mod-content">
+                        <h3 class="mod-title">JourneyMap</h3>
+                        <div class="mod-author">
+                            <i class="fas fa-user"></i>
+                            techbrew
+                        </div>
+                        <p class="mod-description">
+                            Картографируйте и отслеживайте свое путешествие! Отображает карты либо в браузере, либо в игре.
+                        </p>
+                        <div class="mod-stats">
+                            <div class="rating">
+                                <i class="fas fa-star star-icon"></i>
+                                <span>4.7</span>
+                            </div>
+                            <div class="downloads">
+                                <i class="fas fa-download"></i>
+                                <span>2.5M+</span>
+                            </div>
+                        </div>
+                        <div class="mod-actions">
+                            <button class="action-btn primary-btn">
+                                <i class="fas fa-download"></i> Скачать
+                            </button>
+                            <button class="action-btn secondary-btn">
+                                <i class="far fa-bookmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mod Card 4 - Tinkers' Construct -->
+                <div class="mod-card">
+                    <div class="mod-header">
+                        <div class="mod-image" style="background: linear-gradient(to right, #e67e22, #d35400);"></div>
+                        <span class="mod-badge">Крафт</span>
+                    </div>
+                    <div class="mod-content">
+                        <h3 class="mod-title">Tinkers' Construct</h3>
+                        <div class="mod-author">
+                            <i class="fas fa-user"></i>
+                            mDiyo & boni
+                        </div>
+                        <p class="mod-description">
+                            Создавайте и модифицируйте инструменты с уникальными свойствами. Новая система плавильных печей!
+                        </p>
+                        <div class="mod-stats">
+                            <div class="rating">
+                                <i class="fas fa-star star-icon"></i>
+                                <span>4.8</span>
+                            </div>
+                            <div class="downloads">
+                                <i class="fas fa-download"></i>
+                                <span>2.0M+</span>
+                            </div>
+                        </div>
+                        <div class="mod-actions">
+                            <button class="action-btn primary-btn">
+                                <i class="fas fa-download"></i> Скачать
+                            </button>
+                            <button class="action-btn secondary-btn">
+                                <i class="far fa-bookmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mod Card 5 - Botania -->
+                <div class="mod-card">
+                    <div class="mod-header">
+                        <div class="mod-image" style="background: linear-gradient(to right, #9b59b6, #8e44ad);"></div>
+                        <span class="mod-badge">Ботаника</span>
+                    </div>
+                    <div class="mod-content">
+                        <h3 class="mod-title">Botania</h3>
+                        <div class="mod-author">
+                            <i class="fas fa-user"></i>
+                            Vazkii
+                        </div>
+                        <p class="mod-description">
+                            Природная магия, основанная на использовании цветов и управления маной. Храните энергию в растениях!
+                        </p>
+                        <div class="mod-stats">
+                            <div class="rating">
+                                <i class="fas fa-star star-icon"></i>
+                                <span>4.6</span>
+                            </div>
+                            <div class="downloads">
+                                <i class="fas fa-download"></i>
+                                <span>1.1M+</span>
+                            </div>
+                        </div>
+                        <div class="mod-actions">
+                            <button class="action-btn primary-btn">
+                                <i class="fas fa-download"></i> Скачать
+                            </button>
+                            <button class="action-btn secondary-btn">
+                                <i class="far fa-bookmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mod Card 6 - Biomes O' Plenty -->
+                <div class="mod-card">
+                    <div class="mod-header">
+                        <div class="mod-image" style="background: linear-gradient(to right, #27ae60, #2ecc71);"></div>
+                        <span class="mod-badge">Природа</span>
+                    </div>
+                    <div class="mod-content">
+                        <h3 class="mod-title">Biomes O' Plenty</h3>
+                        <div class="mod-author">
+                            <i class="fas fa-user"></i>
+                            Forstride & Adubbz
+                        </div>
+                        <p class="mod-description">
+                            Добавляет более 80 новых биомов, множество новых блоков, предметов и деревьев в мир майнкрафт.
+                        </p>
+                        <div class="mod-stats">
+                            <div class="rating">
+                                <i class="fas fa-star star-icon"></i>
+                                <span>4.5</span>
+                            </div>
+                            <div class="downloads">
+                                <i class="fas fa-download"></i>
+                                <span>1.8M+</span>
+                            </div>
+                        </div>
+                        <div class="mod-actions">
+                            <button class="action-btn primary-btn">
+                                <i class="fas fa-download"></i> Скачать
+                            </button>
+                            <button class="action-btn secondary-btn">
+                                <i class="far fa-bookmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add hover effects and interactions
+        document.querySelectorAll('.mod-card').forEach(card => {
+            card.addEventListener('mouseover', () => {
+                card.style.transform = 'translateY(-7px)';
+            });
+            
+            card.addEventListener('mouseout', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+
+        document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.addEventListener('mouseover', () => {
+                if(btn.classList.contains('primary-btn')) {
+                    btn.style.backgroundColor = '#0d5e2c';
+                } else {
+                    btn.style.backgroundColor = '#e5e7eb';
+                }
+            });
+            
+            btn.addEventListener('mouseout', () => {
+                if(btn.classList.contains('primary-btn')) {
+                    btn.style.backgroundColor = '#1a9047';
+                } else {
+                    btn.style.backgroundColor = '#f3f4f6';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

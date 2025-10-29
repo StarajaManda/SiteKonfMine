@@ -1,11 +1,11 @@
 {% extends "mscar_app/base.html" %}
 {% load static %}
 
-{% block title %}Создать мод - BlockMods{% endblock %}
+{% block title %}Добавить версию - BlockMods{% endblock %}
 
 {% block content %}
 <div class="create-mod-container">
-    <h1>Создать новый мод</h1>
+    <h1>Добавить версию к моду "{{ mod.title }}"</h1>
     
     <!-- Показываем сообщения -->
     {% if messages %}
@@ -22,8 +22,8 @@
         {% csrf_token %}
         
         <div class="form-section">
-            <h2>Основная информация</h2>
-            {% for field in mod_form %}
+            <h2>Информация о версии</h2>
+            {% for field in form %}
             <div class="form-group">
                 <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                 {{ field }}
@@ -41,29 +41,14 @@
             {% endfor %}
         </div>
 
-        <div class="form-section">
-            <h2>Первая версия</h2>
-            {% for field in version_form %}
-            <div class="form-group">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
-                {% if field.help_text %}
-                <small class="help-text">{{ field.help_text }}</small>
-                {% endif %}
-                {% if field.errors %}
-                <div class="error-list">
-                    {% for error in field.errors %}
-                    <span class="error">{{ error }}</span>
-                    {% endfor %}
-                </div>
-                {% endif %}
-            </div>
-            {% endfor %}
+        <div class="form-actions">
+            <button type="submit" class="action-btn primary-btn large">
+                <i class="fas fa-plus"></i> Добавить версию
+            </button>
+            <a href="{% url 'mscar_app:mod_detail' mod.id %}" class="action-btn secondary-btn large">
+                <i class="fas fa-arrow-left"></i> Назад к моду
+            </a>
         </div>
-
-        <button type="submit" class="action-btn primary-btn large">
-            <i class="fas fa-upload"></i> Опубликовать мод
-        </button>
     </form>
 </div>
 {% endblock %}

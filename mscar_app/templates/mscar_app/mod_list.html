@@ -18,7 +18,13 @@
             {% for mod in mods %}
             <div class="mod-card">
                 <div class="mod-header">
-                    <div class="mod-image" style="background: linear-gradient(to right, #0d5e2c, #1a9047);"></div>
+                    {% if mod.image %}
+                        <img src="{{ mod.image.url }}" alt="{{ mod.title }}" class="mod-image">
+                    {% else %}
+                        <div class="mod-image-placeholder">
+                            <i class="fas fa-cube fa-3x"></i>
+                        </div>
+                    {% endif %}
                     <span class="mod-badge">{{ mod.category.name }}</span>
                 </div>
                 <div class="mod-content">
@@ -48,8 +54,10 @@
                         <a href="{% url 'mscar_app:mod_detail' mod.id %}" class="action-btn primary-btn">
                             <i class="fas fa-info-circle"></i> Подробнее
                         </a>
-                        <button class="action-btn secondary-btn">
-                            <i class="far fa-bookmark"></i>
+                        <button class="action-btn secondary-btn bookmark-btn {% if mod.id in user_bookmarks %}active{% endif %}" 
+                            onclick="toggleBookmark({{ mod.id }})"
+                            {% if not user.is_authenticated %}disabled title="Войдите чтобы добавить в закладки"{% endif %}>
+                                <i class="{% if mod.id in user_bookmarks %}fas{% else %}far{% endif %} fa-bookmark"></i>
                         </button>
                     </div>
                 </div>

@@ -1,3 +1,37 @@
+document.addEventListener('DOMContentLoaded', function() {
+    // Обработка кнопок поиска
+    const searchBtn = document.querySelector('.icon-btn .fa-search')?.closest('.icon-btn');
+    if (searchBtn) {
+        searchBtn.addEventListener('click', function() {
+            window.location.href = '/';
+        });
+    }
+    
+    // Обработка кнопки профиля
+    const profileBtn = document.querySelector('.icon-btn .fa-user-circle')?.closest('.icon-btn');
+    if (profileBtn) {
+        profileBtn.addEventListener('click', function() {
+            window.location.href = '/profile/';
+        });
+    }
+    
+    // Обработка кнопки входа
+    const loginBtn = document.querySelector('.icon-btn .fa-sign-in-alt')?.closest('.icon-btn');
+    if (loginBtn) {
+        loginBtn.addEventListener('click', function() {
+            window.location.href = '/login/';
+        });
+    }
+    
+    // Обработка кнопки регистрации
+    const registerBtn = document.querySelector('.icon-btn .fa-user-plus')?.closest('.icon-btn');
+    if (registerBtn) {
+        registerBtn.addEventListener('click', function() {
+            window.location.href = '/register/';
+        });
+    }
+});
+
 function openDownloadModal(modId) {
     const modal = document.getElementById('downloadModal');
     const modalContainer = modal.querySelector('.modal-container');

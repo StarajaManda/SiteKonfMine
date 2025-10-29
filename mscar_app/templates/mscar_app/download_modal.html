@@ -23,7 +23,7 @@
                     <strong>Версия {{ version.version_number }}</strong>
                     <span class="version-date">{{ version.release_date }}</span>
                 </div>
-                <a href="{% url 'mscar_app:download_mod' mod.id version.id %}" class="action-btn secondary-btn download-btn">
+                <a href="{% url 'mscar_app:download_mod_version' mod.id version.id %}" class="action-btn secondary-btn download-btn">
                     <i class="fas fa-download"></i> Скачать
                 </a>
             </div>

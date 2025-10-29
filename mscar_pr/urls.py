@@ -19,6 +19,12 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+# Обработчики ошибок
+handler404 = 'mscar_app.views.handler404'
+handler500 = 'mscar_app.views.handler500'
+handler403 = 'mscar_app.views.handler403'
+handler400 = 'mscar_app.views.handler400'
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('mscar_app.urls')),
@@ -26,3 +32,4 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

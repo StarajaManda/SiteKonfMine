@@ -95,6 +95,20 @@ class Mod(models.Model):
                 # Здесь можно добавить логику для показа поздравления
                 pass
 
+class Bookmark(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Пользователь")
+    mod = models.ForeignKey(Mod, on_delete=models.CASCADE, verbose_name="Мод")  # Теперь Mod определен
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата добавления")
+    
+    class Meta:
+        verbose_name = 'Закладка'
+        verbose_name_plural = 'Закладки'
+        unique_together = ['user', 'mod']  # Один пользователь не может добавить один мод дважды
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.mod.title}"
+
 class Version(models.Model):
     mod = models.ForeignKey(Mod, on_delete=models.CASCADE, related_name='versions')
     version_number = models.CharField(max_length=20, verbose_name="Номер версии")

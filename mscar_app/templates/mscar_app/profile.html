@@ -23,6 +23,13 @@
             {% if user_profile.bio %}
             <p class="user-bio">{{ user_profile.bio }}</p>
             {% endif %}
+            
+            <!-- КНОПКА СОЗДАНИЯ МОДА - ВСЕГДА ВИДНА -->
+            <div class="profile-actions">
+                <a href="{% url 'mscar_app:create_mod' %}" class="action-btn primary-btn">
+                    <i class="fas fa-plus"></i> Создать мод
+                </a>
+            </div>
         </div>
     </div>
 
@@ -46,6 +53,14 @@
 
         <div class="user-mods">
             <h2>Мои моды ({{ user_mods|length }})</h2>
+            
+            <!-- ДУБЛИРУЕМ КНОПКУ СОЗДАНИЯ МОДА ЗДЕСЬ ТОЖЕ -->
+            <div class="create-mod-action" style="margin-bottom: 20px;">
+                <a href="{% url 'mscar_app:create_mod' %}" class="action-btn primary-btn">
+                    <i class="fas fa-plus"></i> Создать новый мод
+                </a>
+            </div>
+            
             {% if user_mods %}
             <div class="mods-grid">
                 {% for mod in user_mods %}
@@ -54,7 +69,9 @@
                         {% if mod.image %}
                         <img src="{{ mod.image.url }}" alt="{{ mod.title }}" class="mod-image">
                         {% else %}
-                        <div class="mod-image" style="background: linear-gradient(to right, #0d5e2c, #1a9047);"></div>
+                        <div class="mod-image-placeholder">
+                            <i class="fas fa-cube fa-3x"></i>
+                        </div>
                         {% endif %}
                         <span class="mod-badge">{{ mod.category.name }}</span>
                     </div>

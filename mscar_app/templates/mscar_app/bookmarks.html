@@ -1,0 +1,169 @@
+{% extends "mscar_app/base.html" %}
+{% load static %}
+
+{% block title %}Мои закладки - BlockMods{% endblock %}
+
+{% block content %}
+<div class="bookmarks-container">
+    <div class="bookmarks-header">
+        <h1>
+            <i class="fas fa-bookmark" style="color: var(--amber);"></i>
+            Мои закладки
+        </h1>
+        <span class="bookmarks-count">Всего: {{ bookmarked_mods|length }}</span>
+    </div>
+
+    {% if bookmarked_mods %}
+    <div class="mods-grid">
+        {% for mod in bookmarked_mods %}
+        <div class="mod-card">
+            <div class="mod-header">
+                {% if mod.image %}
+                <img src="{{ mod.image.url }}" alt="{{ mod.title }}" class="mod-image">
+                {% else %}
+                <div class="mod-image-placeholder">
+                    <i class="fas fa-cube fa-3x"></i>
+                </div>
+                {% endif %}
+                <span class="mod-badge">{{ mod.category.name }}</span>
+                <button class="bookmark-btn active" onclick="toggleBookmark({{ mod.id }})" title="Удалить из закладок">
+                    <i class="fas fa-bookmark"></i>
+                </button>
+            </div>
+            <div class="mod-content">
+                <h3 class="mod-title">{{ mod.title }}</h3>
+                <div class="mod-author">
+                    <i class="fas fa-user"></i>
+                    {{ mod.author.username }}
+                </div>
+                <p class="mod-description">
+                    {{ mod.description|truncatewords:20 }}
+                </p>
+                <div class="mod-stats">
+                    <div class="rating">
+                        <i class="fas fa-star star-icon"></i>
+                        <span>{{ mod.average_rating }}</span>
+                        <small>({{ mod.total_reviews }})</small>
+                    </div>
+                    <div class="downloads">
+                        <i class="fas fa-download"></i>
+                        <span>{{ mod.downloads }}+</span>
+                    </div>
+                </div>
+                <div class="mod-version">
+                    <small>Версия: {{ mod.current_version }}</small>
+                </div>
+                <div class="mod-actions">
+                    <a href="{% url 'mscar_app:mod_detail' mod.id %}" class="action-btn primary-btn">
+                        <i class="fas fa-info-circle"></i> Подробнее
+                    </a>
+                    <button class="action-btn secondary-btn" onclick="toggleBookmark({{ mod.id }})">
+                        <i class="fas fa-bookmark"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-bookmarks">
+        <i class="fas fa-bookmark fa-4x" style="color: #d1d5db;"></i>
+        <h3>У вас пока нет закладок</h3>
+        <p>Добавляйте моды в закладки, чтобы легко находить их позже!</p>
+        <a href="{% url 'mscar_app:mod_list' %}" class="action-btn primary-btn">
+            <i class="fas fa-search"></i> Найти моды
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleBookmark(modId) {
+    fetch(`/mod/${modId}/bookmark/`, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': '{{ csrf_token }}',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.is_bookmarked) {
+            showNotification('Мод добавлен в закладки', 'success');
+            updateBookmarkButton(modId, true);
+        } else {
+            showNotification('Мод удален из закладок', 'info');
+            updateBookmarkButton(modId, false);
+            
+            if (window.location.pathname === '/bookmarks/') {
+                document.querySelector(`[onclick="toggleBookmark(${modId})"]`).closest('.mod-card').remove();
+                updateBookmarksCount();
+            }
+        }
+        updateBookmarksBadge(data.bookmarks_count);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Ошибка при обновлении закладки', 'error');
+    });
+}
+
+function updateBookmarkButton(modId, isBookmarked) {
+    const buttons = document.querySelectorAll(`[onclick="toggleBookmark(${modId})"]`);
+    buttons.forEach(button => {
+        if (isBookmarked) {
+            button.classList.add('active');
+            button.querySelector('i').className = 'fas fa-bookmark';
+            button.title = 'Удалить из закладок';
+        } else {
+            button.classList.remove('active');
+            button.querySelector('i').className = 'far fa-bookmark';
+            button.title = 'Добавить в закладки';
+        }
+    });
+}
+
+function updateBookmarksBadge(count) {
+    const badge = document.getElementById('bookmarksBadge');
+    if (badge) {
+        badge.textContent = count;
+        if (count > 0) {
+            badge.style.display = 'inline';
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+}
+
+function updateBookmarksCount() {
+    const countElement = document.querySelector('.bookmarks-count');
+    if (countElement) {
+        const currentCount = parseInt(countElement.textContent.match(/\d+/)[0]);
+        countElement.textContent = `Всего: ${currentCount - 1}`;
+    }
+}
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type} notification`;
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+</script>
+{% endblock %}

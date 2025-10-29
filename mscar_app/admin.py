@@ -1,5 +1,12 @@
 from django.contrib import admin
-from .models import Category, Mod, Version, Review, Tag, UserProfile
+from .models import Category, Mod, Version, Review, Tag, UserProfile, Bookmark  
+
+@admin.register(Bookmark)
+class BookmarkAdmin(admin.ModelAdmin):
+    list_display = ['user', 'mod', 'created_at']
+    list_filter = ['created_at']
+    search_fields = ['user__username', 'mod__title']
+    readonly_fields = ['created_at']
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):

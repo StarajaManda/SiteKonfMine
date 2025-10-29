@@ -16,7 +16,178 @@
     --transition: all 0.3s ease;
 }
 
-/* Стили для модального окна */
+/* Стили для кнопок закладок */
+.bookmark-btn.active {
+    color: var(--amber);
+    border-color: var(--amber);
+}
+
+.bookmark-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.bookmark-btn:disabled:hover {
+    background-color: var(--light-gray);
+}
+
+/* Анимация для удаления карточек */
+.mod-card {
+    transition: all 0.3s ease;
+}
+
+/* Бейдж для счетчика закладок */
+.badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: var(--amber);
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.icon-btn {
+    position: relative;
+}
+
+/* Стили для страницы добавления версии */
+.form-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-lg);
+    flex-wrap: wrap;
+}
+
+.form-actions .action-btn {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* Стили для действий профиля */
+.profile-actions {
+    margin-top: var(--spacing-md);
+}
+
+.create-mod-action {
+    text-align: center;
+}
+
+.create-mod-action .action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Адаптивность для форм */
+@media (max-width: 768px) {
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions .action-btn {
+        width: 100%;
+    }
+}
+
+/* Стили для плейсхолдеров изображений */
+.mod-image-placeholder {
+    width: 100%;
+    height: 160px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+.mod-image-large-placeholder {
+    flex: 0 0 300px;
+    height: 200px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    border-radius: var(--border-radius);
+}
+
+/* Стили для страниц ошибок */
+.error-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+    padding: var(--spacing-lg);
+}
+
+.error-content {
+    text-align: center;
+    background: var(--white);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    max-width: 500px;
+    width: 100%;
+}
+
+.error-content h1 {
+    margin: var(--spacing-md) 0;
+    color: var(--dark-gray);
+    font-family: 'Rubik', sans-serif;
+}
+
+.error-content p {
+    margin-bottom: var(--spacing-lg);
+    color: var(--dark-gray);
+    line-height: 1.6;
+}
+
+/* Стили для сообщений */
+.messages {
+    margin-bottom: var(--spacing-md);
+}
+
+.alert {
+    padding: 0.75rem 1rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 0.5rem;
+    border: 1px solid transparent;
+    font-weight: 500;
+}
+
+.alert-success {
+    background-color: #d1fae5;
+    color: #065f46;
+    border-color: #a7f3d0;
+}
+
+.alert-error {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border-color: #fecaca;
+}
+
+.alert-info {
+    background-color: #dbeafe;
+    color: #1e40af;
+    border-color: #bfdbfe;
+}
+
+.alert-warning {
+    background-color: #fef3c7;
+    color: #92400e;
+    border-color: #fde68a;
+}
+
 .modal-overlay {
     position: fixed;
     top: 0;
