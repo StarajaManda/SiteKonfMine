@@ -4,77 +4,79 @@
 {% block title %}Мои закладки - BlockMods{% endblock %}
 
 {% block content %}
-<div class="bookmarks-container">
-    <div class="bookmarks-header">
-        <h1>
-            <i class="fas fa-bookmark" style="color: var(--amber);"></i>
-            Мои закладки
-        </h1>
-        <span class="bookmarks-count">Всего: {{ bookmarked_mods|length }}</span>
-    </div>
-
-    {% if bookmarked_mods %}
-    <div class="mods-grid">
-        {% for mod in bookmarked_mods %}
-        <div class="mod-card">
-            <div class="mod-header">
-                {% if mod.image %}
-                <img src="{{ mod.image.url }}" alt="{{ mod.title }}" class="mod-image">
-                {% else %}
-                <div class="mod-image-placeholder">
-                    <i class="fas fa-cube fa-3x"></i>
-                </div>
-                {% endif %}
-                <span class="mod-badge">{{ mod.category.name }}</span>
-                <button class="bookmark-btn active" onclick="toggleBookmark({{ mod.id }})" title="Удалить из закладок">
-                    <i class="fas fa-bookmark"></i>
-                </button>
-            </div>
-            <div class="mod-content">
-                <h3 class="mod-title">{{ mod.title }}</h3>
-                <div class="mod-author">
-                    <i class="fas fa-user"></i>
-                    {{ mod.author.username }}
-                </div>
-                <p class="mod-description">
-                    {{ mod.description|truncatewords:20 }}
-                </p>
-                <div class="mod-stats">
-                    <div class="rating">
-                        <i class="fas fa-star star-icon"></i>
-                        <span>{{ mod.average_rating }}</span>
-                        <small>({{ mod.total_reviews }})</small>
+<div class="mods-grid">
+    <div class="featured-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-bookmark" style="color: var(--amber);"></i>
+                Мои закладки
+            </h2>
+            <span class="mods-count">Найдено: {{ bookmarked_mods|length }}</span>
+        </div>
+        
+        {% if bookmarked_mods %}
+        <div class="featured-mods">
+            {% for mod in bookmarked_mods %}
+            <div class="mod-card">
+                <div class="mod-header">
+                    {% if mod.image %}
+                    <img src="{{ mod.image.url }}" alt="{{ mod.title }}" class="mod-image">
+                    {% else %}
+                    <div class="mod-image-placeholder">
+                        <i class="fas fa-cube fa-3x"></i>
                     </div>
-                    <div class="downloads">
-                        <i class="fas fa-download"></i>
-                        <span>{{ mod.downloads }}+</span>
-                    </div>
-                </div>
-                <div class="mod-version">
-                    <small>Версия: {{ mod.current_version }}</small>
-                </div>
-                <div class="mod-actions">
-                    <a href="{% url 'mscar_app:mod_detail' mod.id %}" class="action-btn primary-btn">
-                        <i class="fas fa-info-circle"></i> Подробнее
-                    </a>
-                    <button class="action-btn secondary-btn" onclick="toggleBookmark({{ mod.id }})">
+                    {% endif %}
+                    <span class="mod-badge">{{ mod.category.name }}</span>
+                    <button class="bookmark-btn active" onclick="toggleBookmark({{ mod.id }})" title="Удалить из закладок">
                         <i class="fas fa-bookmark"></i>
                     </button>
                 </div>
+                <div class="mod-content">
+                    <h3 class="mod-title">{{ mod.title }}</h3>
+                    <div class="mod-author">
+                        <i class="fas fa-user"></i>
+                        {{ mod.author.username }}
+                    </div>
+                    <p class="mod-description">
+                        {{ mod.description|truncatewords:20 }}
+                    </p>
+                    <div class="mod-stats">
+                        <div class="rating">
+                            <i class="fas fa-star star-icon"></i>
+                            <span>{{ mod.average_rating }}</span>
+                            <small>({{ mod.total_reviews }})</small>
+                        </div>
+                        <div class="downloads">
+                            <i class="fas fa-download"></i>
+                            <span>{{ mod.downloads }}+</span>
+                        </div>
+                    </div>
+                    <div class="mod-version">
+                        <small>Версия: {{ mod.current_version }}</small>
+                    </div>
+                    <div class="mod-actions">
+                        <a href="{% url 'mscar_app:mod_detail' mod.id %}" class="action-btn primary-btn">
+                            <i class="fas fa-info-circle"></i> Подробнее
+                        </a>
+                        <button class="action-btn secondary-btn" onclick="toggleBookmark({{ mod.id }})">
+                            <i class="fas fa-bookmark"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
+        {% else %}
+        <div class="no-mods">
+            <i class="fas fa-bookmark fa-3x"></i>
+            <h3>У вас пока нет закладок</h3>
+            <p>Добавляйте моды в закладки, чтобы легко находить их позже!</p>
+            <a href="{% url 'mscar_app:mod_list' %}" class="action-btn primary-btn">
+                <i class="fas fa-search"></i> Найти моды
+            </a>
+        </div>
+        {% endif %}
     </div>
-    {% else %}
-    <div class="no-bookmarks">
-        <i class="fas fa-bookmark fa-4x" style="color: #d1d5db;"></i>
-        <h3>У вас пока нет закладок</h3>
-        <p>Добавляйте моды в закладки, чтобы легко находить их позже!</p>
-        <a href="{% url 'mscar_app:mod_list' %}" class="action-btn primary-btn">
-            <i class="fas fa-search"></i> Найти моды
-        </a>
-    </div>
-    {% endif %}
 </div>
 {% endblock %}
 
@@ -85,7 +87,7 @@ function toggleBookmark(modId) {
         method: 'POST',
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
-            'X-CSRFToken': '{{ csrf_token }}',
+            'X-CSRFToken': getCSRFToken(),
         },
     })
     .then(response => response.json())
@@ -97,9 +99,19 @@ function toggleBookmark(modId) {
             showNotification('Мод удален из закладок', 'info');
             updateBookmarkButton(modId, false);
             
-            if (window.location.pathname === '/bookmarks/') {
-                document.querySelector(`[onclick="toggleBookmark(${modId})"]`).closest('.mod-card').remove();
-                updateBookmarksCount();
+            // Удаляем карточку из списка закладок
+            const card = document.querySelector(`[onclick="toggleBookmark(${modId})"]`).closest('.mod-card');
+            if (card) {
+                card.style.opacity = '0';
+                setTimeout(() => {
+                    card.remove();
+                    // Обновляем счетчик
+                    const countElement = document.querySelector('.mods-count');
+                    if (countElement) {
+                        const currentCount = parseInt(countElement.textContent.match(/\d+/)[0]) || 0;
+                        countElement.textContent = `Найдено: ${Math.max(0, currentCount - 1)}`;
+                    }
+                }, 300);
             }
         }
         updateBookmarksBadge(data.bookmarks_count);
@@ -111,15 +123,17 @@ function toggleBookmark(modId) {
 }
 
 function updateBookmarkButton(modId, isBookmarked) {
-    const buttons = document.querySelectorAll(`[onclick="toggleBookmark(${modId})"]`);
+    const buttons = document.querySelectorAll(`button[onclick="toggleBookmark(${modId})"]`);
     buttons.forEach(button => {
+        const icon = button.querySelector('i');
+        
         if (isBookmarked) {
             button.classList.add('active');
-            button.querySelector('i').className = 'fas fa-bookmark';
+            icon.className = 'fas fa-bookmark';
             button.title = 'Удалить из закладок';
         } else {
             button.classList.remove('active');
-            button.querySelector('i').className = 'far fa-bookmark';
+            icon.className = 'far fa-bookmark';
             button.title = 'Добавить в закладки';
         }
     });
@@ -129,19 +143,7 @@ function updateBookmarksBadge(count) {
     const badge = document.getElementById('bookmarksBadge');
     if (badge) {
         badge.textContent = count;
-        if (count > 0) {
-            badge.style.display = 'inline';
-        } else {
-            badge.style.display = 'none';
-        }
-    }
-}
-
-function updateBookmarksCount() {
-    const countElement = document.querySelector('.bookmarks-count');
-    if (countElement) {
-        const currentCount = parseInt(countElement.textContent.match(/\d+/)[0]);
-        countElement.textContent = `Всего: ${currentCount - 1}`;
+        badge.style.display = count > 0 ? 'inline' : 'none';
     }
 }
 
@@ -153,17 +155,93 @@ function showNotification(message, type) {
         position: fixed;
         top: 20px;
         right: 20px;
-        z-index: 1000;
+        z-index: 10000;
         padding: 12px 20px;
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideIn 0.3s ease-out;
     `;
     
     document.body.appendChild(notification);
     
     setTimeout(() => {
-        notification.remove();
+        notification.style.animation = 'slideOut 0.3s ease-in';
+        setTimeout(() => notification.remove(), 300);
     }, 3000);
 }
+
+function getCSRFToken() {
+    return document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+           getCookie('csrftoken');
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 </script>
+
+<style>
+.notification {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.bookmark-btn {
+    position: absolute;
+    top: var(--spacing-sm);
+    left: var(--spacing-sm);
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    z-index: 2;
+}
+
+.bookmark-btn:hover {
+    background: var(--white);
+    transform: scale(1.1);
+}
+
+.bookmark-btn.active {
+    color: var(--amber);
+}
+</style>
 {% endblock %}

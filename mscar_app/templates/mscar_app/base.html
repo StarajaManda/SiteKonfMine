@@ -12,7 +12,7 @@
 <body class="{% if user.is_authenticated %}logged-in{% else %}logged-out{% endif %}">
     <div class="page-container">
         <div class="header">
-            <div class="logo">
+            <div class="logo" onclick="location.href='{% url 'mscar_app:mod_list' %}'" style="cursor: pointer;">
                 <div class="logo-icon">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M19.5 9L12 3L4.5 9M19.5 9L12 15M19.5 9V21H4.5V9" stroke="#1a9047" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -22,10 +22,6 @@
                 <h1 class="logo-text">BlockMods</h1>
             </div>
             <div class="user-controls">
-                <button class="icon-btn" onclick="location.href='{% url 'mscar_app:mod_list' %}'" title="Поиск модов">
-                    <i class="fas fa-search"></i>
-                </button>
-    
                 {% if user.is_authenticated %}
                     <button class="icon-btn" onclick="location.href='{% url 'mscar_app:bookmarks' %}'" title="Закладки">
                         <i class="fas fa-bookmark"></i>
@@ -35,11 +31,11 @@
                         </span>
                         {% endwith %}
                     </button>
-    
+
                     <button class="icon-btn" onclick="location.href='{% url 'mscar_app:profile' %}'" title="Профиль">
                         <i class="fas fa-user-circle"></i>
                     </button>
-    
+
                     <form method="post" action="{% url 'mscar_app:logout' %}" style="display: inline;">
                         {% csrf_token %}
                         <button type="submit" class="icon-btn" title="Выйти">

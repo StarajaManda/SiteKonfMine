@@ -1,11 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Обработка кнопок поиска
-    const searchBtn = document.querySelector('.icon-btn .fa-search')?.closest('.icon-btn');
-    if (searchBtn) {
-        searchBtn.addEventListener('click', function() {
-            window.location.href = '/';
-        });
-    }
     
     // Обработка кнопки профиля
     const profileBtn = document.querySelector('.icon-btn .fa-user-circle')?.closest('.icon-btn');
