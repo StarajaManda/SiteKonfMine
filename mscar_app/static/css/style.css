@@ -1457,3 +1457,67 @@ body {
         margin: var(--spacing-sm);
     }
 }
+.icon-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: var(--amber);
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    line-height: 1;
+    transition: all 0.2s ease;
+}
+/* Бейдж для иконки закладок в шапке */
+.icon-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: var(--amber);
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    line-height: 1;
+    transition: all 0.2s ease;
+}
+
+/* Стили для уведомлений */
+.notification {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}

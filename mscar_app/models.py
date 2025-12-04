@@ -5,7 +5,6 @@ import os
 
 def mod_image_path(instance, filename):
     """Генерирует путь для изображений модов"""
-    # Используем instance.id если он есть, иначе временный путь
     if instance.id:
         return f'mods/{instance.id}/{filename}'
     return f'mods/temp/{filename}'
@@ -89,12 +88,11 @@ class Mod(models.Model):
         is_new = self.pk is None
         super().save(*args, **kwargs)
         
-        # Если это новый мод и автор еще не авторизован, повышаем его
         if is_new and hasattr(self.author, 'userprofile'):
             if self.author.userprofile.promote_to_author():
-                # Здесь можно добавить логику для показа поздравления
                 pass
 
+# ПЕРЕМЕЩАЕМ Bookmark ПОСЛЕ Mod, чтобы избежать циклической зависимости
 class Bookmark(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Пользователь")
     mod = models.ForeignKey(Mod, on_delete=models.CASCADE, verbose_name="Мод")  # Теперь Mod определен

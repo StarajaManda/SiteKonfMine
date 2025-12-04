@@ -5,7 +5,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 import os
-from .models import Mod, Category, Review, Version, UserProfile, Bookmark
+from .models import Mod, Category, Review, Version, UserProfile, Bookmark  # ✅ Добавили Bookmark
 from .forms import ReviewForm, CustomUserCreationForm, UserProfileForm, ModForm, VersionForm
 from django.http import Http404
 
@@ -14,6 +14,27 @@ def bookmarks(request):
     """Страница с закладками пользователя"""
     user_bookmarks = Bookmark.objects.filter(user=request.user).select_related('mod')
     bookmarked_mods = [bookmark.mod for bookmark in user_bookmarks]
+    
+    # Для AJAX-запросов возвращаем JSON
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({
+            'bookmarks_count': len(bookmarked_mods),
+            'mods': [
+                {
+                    'id': mod.id,
+                    'title': mod.title,
+                    'image_url': mod.image.url if mod.image else '',
+                    'category': mod.category.name,
+                    'author': mod.author.username,
+                    'description': mod.description[:100] + '...' if len(mod.description) > 100 else mod.description,
+                    'average_rating': mod.average_rating,
+                    'total_reviews': mod.total_reviews,
+                    'downloads': mod.downloads,
+                    'current_version': mod.current_version,
+                }
+                for mod in bookmarked_mods
+            ]
+        })
     
     context = {
         'bookmarked_mods': bookmarked_mods,

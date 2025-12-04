@@ -1,38 +1,149 @@
-<div class="download-modal">
-    <div class="modal-header">
-        <h3>Скачать {{ mod.title }}</h3>
-        <button class="close-modal" onclick="closeDownloadModal()">
-            <i class="fas fa-times"></i>
-        </button>
-    </div>
-    
-    <div class="modal-content">
-        <div class="current-version">
-            <h4>Текущая версия: {{ mod.current_version }}</h4>
-            <a href="{% url 'mscar_app:download_mod' mod.id %}" class="action-btn primary-btn large download-btn">
-                <i class="fas fa-download"></i> Скачать последнюю версию
-            </a>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        /* Встроенные стили для модального окна */
+        .download-modal {
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            background: #f3f4f6;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            color: #374151;
+            font-family: 'Rubik', sans-serif;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #374151;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .close-modal:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal-content {
+            padding: 1.5rem;
+        }
+        
+        .current-version {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .versions-list h4 {
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+        
+        .version-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .download-info {
+            margin-top: 1rem;
+            padding: 0.5rem;
+            background: #f0f9ff;
+            border-radius: 8px;
+            border-left: 4px solid #1a9047;
+        }
+        
+        .action-btn {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .primary-btn {
+            background-color: #1a9047;
+            color: white;
+        }
+        
+        .secondary-btn {
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+        
+        .large {
+            padding: 0.75rem 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="download-modal">
+        <div class="modal-header">
+            <h3>Скачать {{ mod.title }}</h3>
+            <button class="close-modal" onclick="closeDownloadModal()">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
         
-        {% if versions %}
-        <div class="versions-list">
-            <h4>Другие версии:</h4>
-            {% for version in versions %}
-            <div class="version-item">
-                <div class="version-info">
-                    <strong>Версия {{ version.version_number }}</strong>
-                    <span class="version-date">{{ version.release_date }}</span>
-                </div>
-                <a href="{% url 'mscar_app:download_mod_version' mod.id version.id %}" class="action-btn secondary-btn download-btn">
-                    <i class="fas fa-download"></i> Скачать
+        <div class="modal-content">
+            <div class="current-version">
+                <h4>Текущая версия: {{ mod.current_version }}</h4>
+                <a href="{% url 'mscar_app:download_mod' mod.id %}" class="action-btn primary-btn large download-btn">
+                    <i class="fas fa-download"></i> Скачать последнюю версию
                 </a>
             </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-        
-        <div class="download-info">
-            <p><i class="fas fa-info-circle"></i> После скачивания переместите файл в папку mods вашего клиента Minecraft</p>
+            
+            {% if versions %}
+            <div class="versions-list">
+                <h4>Другие версии:</h4>
+                {% for version in versions %}
+                <div class="version-item">
+                    <div class="version-info">
+                        <strong>Версия {{ version.version_number }}</strong>
+                        <span class="version-date">{{ version.release_date }}</span>
+                    </div>
+                    <a href="{% url 'mscar_app:download_mod_version' mod.id version.id %}" class="action-btn secondary-btn download-btn">
+                        <i class="fas fa-download"></i> Скачать
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <div class="download-info">
+                <p><i class="fas fa-info-circle"></i> После скачивания переместите файл в папку mods вашего клиента Minecraft</p>
+            </div>
         </div>
     </div>
-</div>
+</body>
+</html>

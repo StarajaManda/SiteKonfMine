@@ -49,12 +49,15 @@
                     onclick="toggleBookmark({{ mod.id }})"
                     {% if not user.is_authenticated %}disabled title="Войдите чтобы добавить в закладки"{% endif %}>
                         <i class="{% if user.is_authenticated and mod.id in user_bookmarks %}fas{% else %}far{% endif %} fa-bookmark"></i> 
-                    {% if user.is_authenticated and mod.id in user_bookmarks %}В закладках{% else %}В закладки{% endif %}
+                    <span class="btn-text">
+                        {% if user.is_authenticated and mod.id in user_bookmarks %}В закладках{% else %}В закладки{% endif %}
+                    </span>
                 </button>
             </div>
         </div>
     </div>
 
+    <!-- Остальная часть файла без изменений -->
     <div class="mod-content-detail">
         <!-- Описание мода -->
         <div class="description-section">
@@ -123,4 +126,8 @@
         <!-- Сюда будет загружаться содержимое модального окна -->
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/script.js' %}"></script>
 {% endblock %}
