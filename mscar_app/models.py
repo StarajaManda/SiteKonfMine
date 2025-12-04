@@ -91,6 +91,20 @@ class Mod(models.Model):
         if is_new and hasattr(self.author, 'userprofile'):
             if self.author.userprofile.promote_to_author():
                 pass
+    
+    def delete(self, *args, **kwargs):
+        """Удаление мода с удалением связанных файлов"""
+        # Удаляем изображение если оно есть
+        if self.image:
+            if os.path.isfile(self.image.path):
+                os.remove(self.image.path)
+        
+        # Удаляем файлы версий
+        for version in self.versions.all():
+            if version.file and os.path.isfile(version.file.path):
+                os.remove(version.file.path)
+        
+        super().delete(*args, **kwargs)
 
 # ПЕРЕМЕЩАЕМ Bookmark ПОСЛЕ Mod, чтобы избежать циклической зависимости
 class Bookmark(models.Model):

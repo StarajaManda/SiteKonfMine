@@ -5,9 +5,61 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 import os
-from .models import Mod, Category, Review, Version, UserProfile, Bookmark  # ✅ Добавили Bookmark
+from .models import Mod, Category, Review, Version, UserProfile, Bookmark
 from .forms import ReviewForm, CustomUserCreationForm, UserProfileForm, ModForm, VersionForm
 from django.http import Http404
+from django.urls import reverse
+
+@login_required
+def delete_mod(request, mod_id):
+    """Удаление мода"""
+    mod = get_object_or_404(Mod, id=mod_id)
+    
+    # Проверяем, что пользователь является автором мода
+    if mod.author != request.user:
+        messages.error(request, 'Вы не можете удалить этот мод')
+        return redirect('mscar_app:mod_detail', mod_id=mod.id)
+    
+    if request.method == 'POST':
+        # Удаляем мод (сработает кастомный метод delete из models.py)
+        mod.delete()
+        messages.success(request, f'Мод "{mod.title}" успешно удален')
+        return redirect('mscar_app:profile')
+    
+    # Если GET-запрос, показываем страницу подтверждения
+    context = {
+        'mod': mod,
+        'categories': Category.objects.all(),
+    }
+    return render(request, 'mscar_app/delete_mod.html', context)
+
+@login_required
+def delete_mod_ajax(request, mod_id):
+    """Удаление мода через AJAX"""
+    if request.headers.get('X-Requested-With') != 'XMLHttpRequest':
+        return JsonResponse({'error': 'Invalid request'}, status=400)
+    
+    mod = get_object_or_404(Mod, id=mod_id)
+    
+    # Проверяем, что пользователь является автором мода
+    if mod.author != request.user:
+        return JsonResponse({
+            'success': False,
+            'message': 'Вы не можете удалить этот мод'
+        }, status=403)
+    
+    try:
+        mod_title = mod.title
+        mod.delete()
+        return JsonResponse({
+            'success': True,
+            'message': f'Мод "{mod_title}" успешно удален'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': f'Ошибка при удалении мода: {str(e)}'
+        }, status=500)
 
 @login_required
 def bookmarks(request):
