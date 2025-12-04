@@ -207,7 +207,7 @@ function removeBookmarkCard(modId, newCount) {
                 let noBookmarksMessage = document.getElementById('noBookmarksMessage');
                 
                 if (!noBookmarksMessage) {
-                    // Создаем новое сообщение
+                    // ИСПРАВЛЕННЫЙ HTML - без инлайн-стилей
                     noBookmarksMessage = document.createElement('div');
                     noBookmarksMessage.id = 'noBookmarksMessage';
                     noBookmarksMessage.className = 'no-mods';
@@ -239,6 +239,94 @@ function removeBookmarkCard(modId, newCount) {
         }, 300);
     }
 }
+
+// Функция для удаления мода (из профиля)
+function confirmDeleteMod(modId) {
+    if (confirm('Вы точно хотите удалить этот мод? Это действие невозможно отменить.')) {
+        // Блокируем кнопку удаления
+        const deleteBtn = document.querySelector(`button[onclick="confirmDeleteMod(${modId})"]`);
+        const originalHTML = deleteBtn.innerHTML;
+        deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        deleteBtn.disabled = true;
+        
+        // Отправляем AJAX запрос
+        fetch(`/mod/${modId}/delete-ajax/`, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': getCSRFToken(),
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification(data.message, 'success');
+                // Удаляем карточку мода
+                const card = document.getElementById(`modCard-${modId}`);
+                if (card) {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateX(20px)';
+                    setTimeout(() => {
+                        card.remove();
+                        
+                        // Обновляем счетчик
+                        const modsCount = document.querySelector('.user-mods h2');
+                        if (modsCount) {
+                            const currentText = modsCount.textContent;
+                            const match = currentText.match(/\((\d+)\)/);
+                            if (match) {
+                                const currentCount = parseInt(match[1]);
+                                modsCount.textContent = modsCount.textContent.replace(
+                                    `(${currentCount})`, 
+                                    `(${currentCount - 1})`
+                                );
+                            }
+                        }
+                        
+                        // Показываем сообщение если модов не осталось
+                        const remainingCards = document.querySelectorAll('.mod-card');
+                        if (remainingCards.length === 0) {
+                            const container = document.querySelector('.user-mods');
+                            if (container) {
+                                const modsGrid = container.querySelector('.mods-grid');
+                                if (modsGrid) modsGrid.style.display = 'none';
+                                
+                                const existingNoMods = container.querySelector('.no-mods');
+                                if (!existingNoMods) {
+                                    // ИСПРАВЛЕННЫЙ HTML - без инлайн-стилей
+                                    const noModsHTML = `
+                                        <div class="no-mods">
+                                            <i class="fas fa-box-open fa-3x"></i>
+                                            <h3>У вас пока нет модов</h3>
+                                            <p>Создайте свой первый мод!</p>
+                                            <a href="/mod/create/" class="action-btn primary-btn">
+                                                <i class="fas fa-plus"></i> Создать мод
+                                            </a>
+                                        </div>
+                                    `;
+                                    container.insertAdjacentHTML('beforeend', noModsHTML);
+                                }
+                            }
+                        }
+                    }, 300);
+                }
+            } else {
+                showNotification(data.message, 'error');
+                deleteBtn.innerHTML = originalHTML;
+                deleteBtn.disabled = false;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Ошибка при удалении мода', 'error');
+            deleteBtn.innerHTML = originalHTML;
+            deleteBtn.disabled = false;
+        });
+    }
+}
+
+// Добавляем функцию в глобальную область видимости
+window.confirmDeleteMod = confirmDeleteMod;
 
 // Модальное окно скачивания
 function openDownloadModal(modId) {

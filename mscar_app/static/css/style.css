@@ -1521,3 +1521,220 @@ body {
     from { transform: translateX(0); opacity: 1; }
     to { transform: translateX(100%); opacity: 0; }
 }
+
+.mod-badge-left {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    right: auto !important;
+    background: var(--amber);
+    color: var(--white);
+    padding: 0.25rem 0.5rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    z-index: 2;
+}
+
+/* Убираем старое положение категории */
+.mod-badge {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    background: var(--amber);
+    color: var(--white);
+    padding: 0.25rem 0.5rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Убедимся, что header карточки правильно позиционирован */
+.mod-header {
+    position: relative;
+}
+
+/* Для всех карточек модов на сайте */
+.featured-mods .mod-card .mod-badge,
+.mods-grid .mod-card .mod-badge,
+.bookmarks-container .mod-card .mod-badge,
+.user-mods .mod-card .mod-badge {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    right: auto;
+}
+
+/* Кнопки в верхнем правом углу */
+.bookmark-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 3;
+}
+
+.delete-mod-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 3;
+}
+.action-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    vertical-align: middle !important;
+}
+
+/* Убираем любые инлайн-стили для кнопок */
+.action-btn[style*="background-color"] {
+    background-color: var(--primary-green) !important;
+}
+
+/* Особенно для кнопок в сообщениях "нет модов" и "нет закладок" */
+.no-mods .action-btn,
+.no-reviews .action-btn,
+.auth-required .action-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    padding: 0.75rem 1.5rem !important;
+    margin-top: 1rem !important;
+}
+
+/* Убедимся, что иконки и текст на одной линии */
+.action-btn i {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 1em !important;
+    width: 1em !important;
+    line-height: 1 !important;
+    vertical-align: baseline !important;
+}
+
+.action-btn span {
+    display: inline !important;
+    vertical-align: baseline !important;
+}
+
+/* Кнопки в модальных окнах */
+.modal-content .action-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+.action-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    vertical-align: middle !important;
+    line-height: 1 !important;
+    height: auto !important;
+    min-height: 44px !important; /* Минимальная высота для удобства */
+}
+
+/* Исправляем иконки внутри кнопок */
+.action-btn i {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 1em !important;
+    width: 1em !important;
+    line-height: 1 !important;
+    font-size: 1em !important;
+    vertical-align: middle !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Убираем отступы у текста в кнопках */
+.action-btn span,
+.action-btn .btn-text {
+    display: inline !important;
+    vertical-align: middle !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Особенно для кнопок в сообщениях "нет модов" и "нет закладок" */
+.no-mods .action-btn,
+.no-reviews .action-btn,
+.auth-required .action-btn,
+.no-mods .action-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    padding: 0.75rem 1.5rem !important;
+    margin-top: 1rem !important;
+    height: auto !important;
+}
+
+/* Фикс для кнопок в профиле */
+.profile-actions .action-btn,
+.create-mod-action .action-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Фикс для кнопок в карточках модов */
+.mod-actions .action-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 0.5rem !important;
+}
+
+/* Фикс для кнопок закладок в карточках */
+.bookmark-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 32px !important;
+    width: 32px !important;
+}
+
+/* Фикс для кнопок в модальных окнах */
+.modal-content .action-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: auto !important;
+}
+
+/* Фикс для кнопок в формах */
+.form-actions .action-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Переопределяем любые проблемные стили */
+button.action-btn i,
+a.action-btn i,
+input[type="submit"].action-btn i,
+input[type="button"].action-btn i {
+    vertical-align: middle !important;
+    line-height: 1 !important;
+    position: relative !important;
+    top: 0 !important;
+    transform: none !important;
+}
+
+/* Убираем инлайн-стили которые могут мешать */
+.action-btn[style*="background-color"],
+.action-btn[style*="height"],
+.action-btn[style*="line-height"] {
+    background-color: var(--primary-green) !important;
+    height: auto !important;
+    min-height: 44px !important;
+    line-height: 1 !important;
+}

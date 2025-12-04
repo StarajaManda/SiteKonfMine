@@ -10,6 +10,158 @@ from .forms import ReviewForm, CustomUserCreationForm, UserProfileForm, ModForm,
 from django.http import Http404
 from django.urls import reverse
 
+def register(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            # Сообщение показывается ТОЛЬКО на следующей странице (mod_list)
+            messages.success(request, 'Регистрация прошла успешно!')
+            return redirect('mscar_app:mod_list')
+        else:
+            # Сообщения об ошибках показываем на ЭТОЙ же странице
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f'Ошибка в поле "{field}": {error}')
+    
+    else:
+        form = CustomUserCreationForm()
+    
+    # Очищаем ВСЕ сообщения перед рендерингом страницы регистрации
+    # чтобы не показывать старые сообщения с других страниц
+    storage = messages.get_messages(request)
+    storage.used = True
+    
+    return render(request, 'mscar_app/register.html', {'form': form})
+
+def user_login(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            messages.success(request, f'Добро пожаловать, {username}!')
+            return redirect('mscar_app:mod_list')
+        else:
+            # Сообщение об ошибке показываем на ЭТОЙ же странице
+            messages.error(request, 'Неверное имя пользователя или пароль')
+    
+    # Очищаем ВСЕ сообщения перед рендерингом страницы входа
+    storage = messages.get_messages(request)
+    storage.used = True
+    
+    return render(request, 'mscar_app/login.html')
+
+@login_required
+def user_logout(request):
+    logout(request)
+    messages.success(request, 'Вы успешно вышли из системы')
+    return redirect('mscar_app:mod_list')
+
+@login_required
+def create_mod(request):
+    if request.method == 'POST':
+        mod_form = ModForm(request.POST, request.FILES)
+        version_form = VersionForm(request.POST, request.FILES)
+        
+        if mod_form.is_valid() and version_form.is_valid():
+            # Сохраняем мод
+            mod = mod_form.save(commit=False)
+            mod.author = request.user
+            mod.current_version = version_form.cleaned_data['version_number']
+            mod.save()
+            
+            # Сохраняем версию
+            version = version_form.save(commit=False)
+            version.mod = mod
+            version.save()
+            
+            # Проверяем, стал ли пользователь автором
+            user_profile = request.user.userprofile
+            became_author = user_profile.promote_to_author()
+            
+            messages.success(request, 'Мод успешно создан!')
+            
+            if became_author:
+                messages.info(request, 'Поздравляем! Теперь вы автор на BlockMods!')
+            
+            return redirect('mscar_app:mod_detail', mod_id=mod.id)
+        else:
+            # Показываем ошибки формы на ЭТОЙ же странице
+            for field, errors in mod_form.errors.items():
+                for error in errors:
+                    messages.error(request, f'Ошибка в поле "{field}": {error}')
+            for field, errors in version_form.errors.items():
+                for error in errors:
+                    messages.error(request, f'Ошибка в поле "{field}": {error}')
+    
+    else:
+        mod_form = ModForm()
+        version_form = VersionForm()
+    
+    # Очищаем ВСЕ сообщения перед рендерингом страницы создания мода
+    # кроме тех, что были добавлены ВЫШЕ (ошибки валидации формы)
+    # Мы не очищаем, а просто гарантируем что старые сообщения не покажутся
+    existing_messages = list(messages.get_messages(request))
+    storage = messages.get_messages(request)
+    storage.used = True
+    
+    # Если есть ошибки формы (добавленные выше), сохраняем их
+    form_errors = [msg for msg in existing_messages if 'Ошибка в поле' in str(msg.message)]
+    for error in form_errors:
+        messages.error(request, str(error.message))
+    
+    context = {
+        'mod_form': mod_form,
+        'version_form': version_form,
+        'categories': Category.objects.all(),
+    }
+    return render(request, 'mscar_app/create_mod.html', context)
+
+@login_required
+def add_version(request, mod_id):
+    mod = get_object_or_404(Mod, id=mod_id, author=request.user)
+    
+    if request.method == 'POST':
+        form = VersionForm(request.POST, request.FILES)
+        if form.is_valid():
+            version = form.save(commit=False)
+            version.mod = mod
+            version.save()
+            
+            # Обновляем текущую версию мода
+            mod.current_version = version.version_number
+            mod.save()
+            
+            messages.success(request, 'Версия успешно добавлена!')
+            return redirect('mscar_app:mod_detail', mod_id=mod.id)
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f'Ошибка в поле "{field}": {error}')
+    
+    else:
+        form = VersionForm()
+    
+    # Очищаем старые сообщения перед рендерингом
+    existing_messages = list(messages.get_messages(request))
+    storage = messages.get_messages(request)
+    storage.used = True
+    
+    # Восстанавливаем только ошибки формы (добавленные выше)
+    form_errors = [msg for msg in existing_messages if 'Ошибка в поле' in str(msg.message)]
+    for error in form_errors:
+        messages.error(request, str(error.message))
+    
+    context = {
+        'form': form,
+        'mod': mod,
+    }
+    return render(request, 'mscar_app/add_version.html', context)
+
+
 @login_required
 def delete_mod(request, mod_id):
     """Удаление мода"""

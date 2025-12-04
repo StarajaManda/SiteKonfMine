@@ -27,7 +27,9 @@
                             <i class="fas fa-cube fa-3x"></i>
                         </div>
                         {% endif %}
-                        <span class="mod-badge">{{ mod.category.name }}</span>
+                        <!-- Категория в левом верхнем углу -->
+                        <span class="mod-badge mod-badge-left">{{ mod.category.name }}</span>
+                        <!-- Иконка закладки в правом верхнем углу -->
                         <button class="bookmark-btn active" onclick="toggleBookmark({{ mod.id }}, true)" 
                                 title="Удалить из закладок" data-mod-id="{{ mod.id }}">
                             <i class="fas fa-bookmark"></i>
@@ -111,6 +113,48 @@
         color: var(--dark-gray);
     }
     
+    /* Категория в левом верхнем углу */
+    .mod-badge-left {
+        position: absolute;
+        top: 0.5rem;
+        left: 0.5rem;
+        right: auto;
+        background: var(--amber);
+        color: var(--white);
+        padding: 0.25rem 0.5rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        z-index: 2;
+    }
+    
+    /* Кнопка закладки в правом верхнем углу */
+    .bookmark-btn {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: var(--transition);
+        z-index: 2;
+    }
+    
+    .bookmark-btn:hover {
+        background: var(--white);
+        transform: scale(1.1);
+    }
+    
+    .bookmark-btn.active {
+        color: var(--amber);
+    }
+    
     /* Анимация для удаления карточек */
     .mod-card {
         transition: all 0.3s ease;
@@ -122,5 +166,29 @@
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
         gap: var(--spacing-md);
     }
+    #noBookmarksMessage .action-btn {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 0.5rem !important;
+        padding: 0.75rem 1.5rem !important;
+        margin-top: 1rem !important;
+        height: 44px !important;
+        min-height: 44px !important;
+        line-height: 1 !important;
+    }
+    
+    #noBookmarksMessage .action-btn i {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        height: 1em !important;
+        width: 1em !important;
+        line-height: 1 !important;
+        font-size: 1em !important;
+        vertical-align: middle !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
 </style>
-{% endblock %}  
+{% endblock %}

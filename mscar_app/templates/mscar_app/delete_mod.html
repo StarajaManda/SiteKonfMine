@@ -1,0 +1,234 @@
+{% extends "mscar_app/base.html" %}
+{% load static %}
+
+{% block title %}Удалить мод - BlockMods{% endblock %}
+
+{% block content %}
+<div class="delete-mod-container">
+    <div class="confirmation-card">
+        <div class="confirmation-header">
+            <i class="fas fa-exclamation-triangle fa-3x" style="color: #dc2626;"></i>
+            <h1>Подтверждение удаления</h1>
+        </div>
+        
+        <div class="confirmation-content">
+            <div class="mod-preview">
+                {% if mod.image %}
+                    <img src="{{ mod.image.url }}" alt="{{ mod.title }}" class="mod-image-preview">
+                {% else %}
+                    <div class="mod-image-preview-placeholder">
+                        <i class="fas fa-cube fa-2x"></i>
+                    </div>
+                {% endif %}
+                <div class="mod-info-preview">
+                    <h3>{{ mod.title }}</h3>
+                    <p><strong>Категория:</strong> {{ mod.category.name }}</p>
+                    <p><strong>Версия:</strong> {{ mod.current_version }}</p>
+                    <p><strong>Скачиваний:</strong> {{ mod.downloads }}</p>
+                    <p><strong>Отзывов:</strong> {{ mod.total_reviews }}</p>
+                    <p><strong>Дата создания:</strong> {{ mod.created_at|date:"d.m.Y" }}</p>
+                </div>
+            </div>
+            
+            <div class="warning-message">
+                <p><i class="fas fa-exclamation-circle"></i> Вы уверены, что хотите удалить этот мод?</p>
+                <ul>
+                    <li>Мод будет полностью удален из каталога</li>
+                    <li>Все связанные версии и файлы будут удалены</li>
+                    <li>Отзывы к этому моду будут удалены</li>
+                    <li>Мод будет удален из закладок всех пользователей</li>
+                    <li>Действие невозможно отменить</li>
+                </ul>
+            </div>
+            
+            <div class="confirmation-actions">
+                <form method="post" id="deleteForm">
+                    {% csrf_token %}
+                    <button type="button" onclick="confirmDelete({{ mod.id }})" class="action-btn danger-btn">
+                        <i class="fas fa-trash"></i> Да, удалить мод
+                    </button>
+                    <a href="{% url 'mscar_app:profile' %}" class="action-btn secondary-btn">
+                        <i class="fas fa-times"></i> Отмена
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/script.js' %}"></script>
+<script>
+function confirmDelete(modId) {
+    if (confirm('Вы точно хотите удалить этот мод? Это действие невозможно отменить.')) {
+        // Блокируем кнопку
+        const deleteBtn = document.querySelector('.danger-btn');
+        const originalText = deleteBtn.innerHTML;
+        deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Удаление...';
+        deleteBtn.disabled = true;
+        
+        // Отправляем AJAX запрос
+        fetch(`/mod/${modId}/delete-ajax/`, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': getCSRFToken(),
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification(data.message, 'success');
+                // Перенаправляем на профиль через 1.5 секунды
+                setTimeout(() => {
+                    window.location.href = '{% url "mscar_app:profile" %}';
+                }, 1500);
+            } else {
+                showNotification(data.message, 'error');
+                deleteBtn.innerHTML = originalText;
+                deleteBtn.disabled = false;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Ошибка при удалении мода', 'error');
+            deleteBtn.innerHTML = originalText;
+            deleteBtn.disabled = false;
+        });
+    }
+}
+</script>
+
+<style>
+.delete-mod-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: var(--spacing-md);
+}
+
+.confirmation-card {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+}
+
+.confirmation-header {
+    background: #fee2e2;
+    padding: var(--spacing-lg);
+    text-align: center;
+    border-bottom: 1px solid #fecaca;
+}
+
+.confirmation-header h1 {
+    margin-top: var(--spacing-sm);
+    color: #991b1b;
+    font-family: 'Rubik', sans-serif;
+}
+
+.confirmation-content {
+    padding: var(--spacing-lg);
+}
+
+.mod-preview {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-md);
+    background: var(--light-gray);
+    border-radius: var(--border-radius);
+}
+
+.mod-image-preview {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+}
+
+.mod-image-preview-placeholder {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.mod-info-preview h3 {
+    margin-bottom: var(--spacing-sm);
+    color: var(--dark-gray);
+}
+
+.mod-info-preview p {
+    margin-bottom: 0.25rem;
+    color: var(--dark-gray);
+    font-size: 0.9rem;
+}
+
+.warning-message {
+    background: #fef3c7;
+    border: 1px solid #fde68a;
+    border-radius: var(--border-radius);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.warning-message p {
+    color: #92400e;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.warning-message ul {
+    margin-left: var(--spacing-md);
+    color: #92400e;
+}
+
+.warning-message li {
+    margin-bottom: 0.25rem;
+}
+
+.confirmation-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.danger-btn {
+    background-color: #dc2626;
+    color: white;
+    border: none;
+}
+
+.danger-btn:hover {
+    background-color: #b91c1c;
+}
+
+@media (max-width: 768px) {
+    .mod-preview {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .mod-image-preview,
+    .mod-image-preview-placeholder {
+        margin: 0 auto;
+    }
+    
+    .confirmation-actions {
+        flex-direction: column;
+    }
+    
+    .confirmation-actions .action-btn {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}

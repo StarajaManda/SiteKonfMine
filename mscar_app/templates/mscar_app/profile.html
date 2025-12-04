@@ -24,7 +24,7 @@
             <p class="user-bio">{{ user_profile.bio }}</p>
             {% endif %}
             
-            <!-- КНОПКА СОЗДАНИЯ МОДА - ВСЕГДА ВИДНА -->
+            <!-- ОДНА кнопка создания мода в шапке профиля -->
             <div class="profile-actions">
                 <a href="{% url 'mscar_app:create_mod' %}" class="action-btn primary-btn">
                     <i class="fas fa-plus"></i> Создать мод
@@ -54,17 +54,10 @@
         <div class="user-mods">
             <h2>Мои моды ({{ user_mods|length }})</h2>
             
-            <!-- ДУБЛИРУЕМ КНОПКУ СОЗДАНИЯ МОДА ЗДЕСЬ ТОЖЕ -->
-            <div class="create-mod-action" style="margin-bottom: 20px;">
-                <a href="{% url 'mscar_app:create_mod' %}" class="action-btn primary-btn">
-                    <i class="fas fa-plus"></i> Создать новый мод
-                </a>
-            </div>
-            
             {% if user_mods %}
             <div class="mods-grid">
                 {% for mod in user_mods %}
-                <div class="mod-card">
+                <div class="mod-card" id="modCard-{{ mod.id }}">
                     <div class="mod-header">
                         {% if mod.image %}
                         <img src="{{ mod.image.url }}" alt="{{ mod.title }}" class="mod-image">
@@ -73,7 +66,12 @@
                             <i class="fas fa-cube fa-3x"></i>
                         </div>
                         {% endif %}
-                        <span class="mod-badge">{{ mod.category.name }}</span>
+                        <!-- Категория в левом верхнем углу -->
+                        <span class="mod-badge mod-badge-left">{{ mod.category.name }}</span>
+                        <!-- Крестик удаления в правом верхнем углу -->
+                        <button class="delete-mod-btn" onclick="confirmDeleteMod({{ mod.id }})" title="Удалить мод">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
                     <div class="mod-content">
                         <h3 class="mod-title">{{ mod.title }}</h3>
@@ -112,4 +110,186 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/script.js' %}"></script>
+<script>
+function confirmDeleteMod(modId) {
+    if (confirm('Вы точно хотите удалить этот мод? Это действие невозможно отменить.')) {
+        // Блокируем кнопку удаления
+        const deleteBtn = document.querySelector(`button[onclick="confirmDeleteMod(${modId})"]`);
+        const originalHTML = deleteBtn.innerHTML;
+        deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        deleteBtn.disabled = true;
+        
+        // Отправляем AJAX запрос
+        fetch(`/mod/${modId}/delete-ajax/`, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': getCSRFToken(),
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification(data.message, 'success');
+                // Удаляем карточку мода
+                const card = document.getElementById(`modCard-${modId}`);
+                if (card) {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateX(20px)';
+                    setTimeout(() => {
+                        card.remove();
+                        
+                        // Обновляем счетчик
+                        const modsCount = document.querySelector('.user-mods h2');
+                        if (modsCount) {
+                            const currentText = modsCount.textContent;
+                            const match = currentText.match(/\((\d+)\)/);
+                            if (match) {
+                                const currentCount = parseInt(match[1]);
+                                modsCount.textContent = modsCount.textContent.replace(
+                                    `(${currentCount})`, 
+                                    `(${currentCount - 1})`
+                                );
+                            }
+                        }
+                        
+                        // Показываем сообщение если модов не осталось
+                        const remainingCards = document.querySelectorAll('.mod-card');
+                        if (remainingCards.length === 0) {
+                            const container = document.querySelector('.user-mods');
+                            if (container) {
+                                const modsGrid = container.querySelector('.mods-grid');
+                                if (modsGrid) modsGrid.style.display = 'none';
+                                
+                                const existingNoMods = container.querySelector('.no-mods');
+                                if (!existingNoMods) {
+                                    const noModsHTML = `
+                                        <div class="no-mods">
+                                            <i class="fas fa-box-open fa-3x"></i>
+                                            <h3>У вас пока нет модов</h3>
+                                            <p>Создайте свой первый мод!</p>
+                                            <a href="{% url 'mscar_app:create_mod' %}" class="action-btn primary-btn">
+                                                <i class="fas fa-plus"></i> Создать мод
+                                            </a>
+                                        </div>
+                                    `;
+                                    container.insertAdjacentHTML('beforeend', noModsHTML);
+                                }
+                            }
+                        }
+                    }, 300);
+                }
+            } else {
+                showNotification(data.message, 'error');
+                deleteBtn.innerHTML = originalHTML;
+                deleteBtn.disabled = false;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Ошибка при удалении мода', 'error');
+            deleteBtn.innerHTML = originalHTML;
+            deleteBtn.disabled = false;
+        });
+    }
+}
+
+// Добавляем функцию в глобальную область видимости для кнопок в карточках
+window.confirmDeleteMod = confirmDeleteMod;
+</script>
+
+<style>
+    /* Стили для кнопки удаления в карточке */
+    .delete-mod-btn {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        background: rgba(220, 38, 38, 0.9);
+        border: none;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: var(--transition);
+        z-index: 2;
+        color: white;
+    }
+
+    .delete-mod-btn:hover {
+        background: #b91c1c;
+        transform: scale(1.1);
+    }
+
+    /* Категория в левом верхнем углу */
+    .mod-badge-left {
+        position: absolute;
+        top: 0.5rem;
+        left: 0.5rem;
+        right: auto;
+        background: var(--amber);
+        color: var(--white);
+        padding: 0.25rem 0.5rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        z-index: 2;
+    }
+
+    .mod-header {
+        position: relative;
+    }
+
+    /* Убедимся, что моды отображаются сеткой */
+    .mods-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: var(--spacing-md);
+    }
+
+    .mod-card {
+        position: relative;
+        transition: all 0.3s ease;
+    }
+     .no-mods .action-btn {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 0.5rem !important;
+        padding: 0.75rem 1.5rem !important;
+        margin-top: 1rem !important;
+        height: 44px !important;
+        min-height: 44px !important;
+        line-height: 1 !important;
+    }
+    
+    .no-mods .action-btn i {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        height: 1em !important;
+        width: 1em !important;
+        line-height: 1 !important;
+        font-size: 1em !important;
+        vertical-align: middle !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    /* Кнопка создания мода в шапке профиля */
+    .profile-actions .action-btn {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 0.5rem !important;
+        height: 44px !important;
+        min-height: 44px !important;
+    }
+</style>
 {% endblock %}
